@@ -18,13 +18,13 @@ if st.button('挨拶する'):
         st.error('名前を入力してください。')  # エラーメッセージを表示
 
 # スライダーを作成し、値を選択
-number = st.slider('好きな数字（１０進数）を選んでください', 0, 100)
+number = st.slider('好きな数字（10進数）を選んでください', 0, 100)
 
 # 補足メッセージ
 st.caption("十字キー（左右）でも調整できます。")
 
 # 選択した数字を表示
-st.write(f'あなたが選んだ数字は{number}です。')
+st.write(f'あなたが選んだ数字は「{number}」です。')
 
 # 選択した数値を2進数に変換
 binary_representation = bin(number)[2:]  # 'bin'関数で2進数に変換し、先頭の'0b'を取り除く

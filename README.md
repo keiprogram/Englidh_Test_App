@@ -9,5 +9,5 @@ Streamlitを使用して開発するためのテンプレートです。この�
 
 ## 使用方法
 1. リポジトリをクローンまたはダウンロードします
-2. Streamlitのマイページから、デプロイしてください（https://streamlit.io/）
+2. Streamlitのマイページから、デプロイしてください（ https://streamlit.io/ ）
 

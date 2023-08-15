@@ -9,7 +9,7 @@ user_input = st.text_input('あなたの名前を入力してください')
 
 # ボタンを作成し、クリックされたらメッセージを表示
 if st.button('挨拶する'):
-    st.write(f'こんにちは、{user_input}さん!')
+    st.success(f'こんにちは、{user_input}さん!')
 
 # スライダーを作成し、値を選択
 number = st.slider('好きな数字を選んでください', 0, 100)

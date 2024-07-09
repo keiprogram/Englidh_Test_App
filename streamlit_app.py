@@ -1,31 +1,57 @@
-# Streamlitライブラリをインポート
 import streamlit as st
+import pandas as pd
+import time
 
-# ページ設定（タブに表示されるタイトル、表示幅）
-st.set_page_config(page_title="タイトル", layout="wide")
+# ページ設定
+st.set_page_config(page_title="Vocabulary Test App", layout="wide")
+
+# Excelファイルからデータを読み込み
+excel_file = '/mnt/data/リープベーシック見出語・用例リスト(Part 1).xlsx'
+df = pd.read_excel(excel_file)
+
+# 単語とその意味をリストに格納
+words = df['単語'].tolist()
+meanings = df['意味'].tolist()
+
+# 単語と意味のペアを辞書にする
+word_dict = dict(zip(words, meanings))
 
 # タイトルを設定
-st.title('Streamlitのサンプルアプリ')
+st.title('Vocabulary Test App')
 
-# テキスト入力ボックスを作成し、ユーザーからの入力を受け取る
-user_input = st.text_input('あなたの名前を入力してください')
+# テストの説明
+st.write("5分間でできるだけ多くの単語の意味を回答してください。")
 
-# ボタンを作成し、クリックされたらメッセージを表示
-if st.button('挨拶する'):
-    if user_input:  # 名前が入力されているかチェック
-        st.success(f'🌟 こんにちは、{user_input}さん! 🌟')  # メッセージをハイライト
+# テスト開始ボタン
+if st.button('テストを開始する'):
+    st.session_state['start'] = True
+    st.session_state['current_index'] = 0
+    st.session_state['correct_answers'] = 0
+    st.session_state['start_time'] = time.time()
+
+# テストの実施
+if 'start' in st.session_state and st.session_state['start']:
+    current_time = time.time()
+    elapsed_time = current_time - st.session_state['start_time']
+    remaining_time = 300 - elapsed_time  # 5分（300秒）からの残り時間
+
+    if remaining_time > 0:
+        st.write(f"残り時間: {int(remaining_time)}秒")
+        current_word = words[st.session_state['current_index']]
+        user_answer = st.text_input(f"意味を入力してください: {current_word}")
+
+        if st.button('次へ'):
+            if user_answer == word_dict[current_word]:
+                st.session_state['correct_answers'] += 1
+            st.session_state['current_index'] += 1
+            if st.session_state['current_index'] >= len(words):
+                st.session_state['current_index'] = 0  # ループする
     else:
-        st.error('名前を入力してください。')  # エラーメッセージを表示
+        st.session_state['start'] = False
+        st.write(f"テスト終了！正解数: {st.session_state['correct_answers']}")
 
-# スライダーを作成し、値を選択
-number = st.slider('好きな数字（10進数）を選んでください', 0, 100)
-
-# 補足メッセージ
-st.caption("十字キー（左右）でも調整できます。")
-
-# 選択した数字を表示
-st.write(f'あなたが選んだ数字は「{number}」です。')
-
-# 選択した数値を2進数に変換
-binary_representation = bin(number)[2:]  # 'bin'関数で2進数に変換し、先頭の'0b'を取り除く
-st.info(f'🔢 10進数の「{number}」を2進数で表現すると「{binary_representation}」になります。 🔢')  # 2進数の表示をハイライト
+# 初期化ボタン
+if st.button('初期化する'):
+    for key in st.session_state.keys():
+        del st.session_state[key]
+    st.experimental_rerun()

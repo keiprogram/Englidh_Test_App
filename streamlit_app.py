@@ -52,6 +52,7 @@ else:
         remaining_time = 60 - elapsed_time
         if remaining_time > 0:
             st.write(f"残り時間: {int(remaining_time)}秒")
+            st.progress(elapsed_time / 60.0)  # タイマーの進行状況バーを表示
         else:
             st.session_state.test_started = False
             st.write(f"時間切れ！正解数: {st.session_state.correct_answers}/10")

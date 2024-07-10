@@ -1,57 +1,76 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import time
 
-# ページ設定
-st.set_page_config(page_title="Vocabulary Test App", layout="wide")
+st.set_page_config(page_title="英単語テストアプリ")
 
-# Excelファイルからデータを読み込み
-excel_file = '/mnt/data/リープベーシック見出語・用例リスト(Part 1).xlsx'
-df = pd.read_excel(excel_file)
+# タイトルと説明
+st.title('英単語テストアプリ')
+st.write('英単語をランダムに表示して、勉強をサポートします！')
 
-# 単語とその意味をリストに格納
-words = df['単語'].tolist()
-meanings = df['意味'].tolist()
+# Load the data from multiple Excel files
+@st.cache
+def load_data():
+    part1 = pd.read_excel("リープベーシック見出語・用例リスト(Part 1).xlsx")
+    part2 = pd.read_excel("リープベーシック見出語・用例リスト(Part 2).xlsx")
+    part3 = pd.read_excel("リープベーシック見出語・用例リスト(Part 3).xlsx")
+    part4 = pd.read_excel("リープベーシック見出語・用例リスト(Part 4).xlsx")
+    return pd.concat([part1, part2, part3, part4], ignore_index=True)
 
-# 単語と意味のペアを辞書にする
-word_dict = dict(zip(words, meanings))
+words_df = load_data()
 
-# タイトルを設定
-st.title('Vocabulary Test App')
+# ガチャ機能
+if st.button('ガチャを引く！'):
+    selected_word = words_df.sample().iloc[0]
+    
+    st.session_state.selected_word = selected_word
+    st.session_state.display_meaning = False
 
-# テストの説明
-st.write("5分間でできるだけ多くの単語の意味を回答してください。")
+if 'selected_word' in st.session_state:
+    st.header(f"単語名: {st.session_state.selected_word['単語']}")
+    if 'レア度' in st.session_state.selected_word:
+        st.subheader(f"レア度: {st.session_state.selected_word['レア度']}")
 
-# テスト開始ボタン
+    if st.button('意味を確認する'):
+        st.session_state.display_meaning = True
+
+    if st.session_state.display_meaning:
+        st.write(f"意味: {st.session_state.selected_word['意味']}")
+
+# テスト機能
 if st.button('テストを開始する'):
-    st.session_state['start'] = True
-    st.session_state['current_index'] = 0
-    st.session_state['correct_answers'] = 0
-    st.session_state['start_time'] = time.time()
+    st.session_state.test_started = True
+    st.session_state.correct_answers = 0
+    st.session_state.current_question = 0
+    st.session_state.start_time = time.time()
 
-# テストの実施
-if 'start' in st.session_state and st.session_state['start']:
-    current_time = time.time()
-    elapsed_time = current_time - st.session_state['start_time']
-    remaining_time = 300 - elapsed_time  # 5分（300秒）からの残り時間
+if 'test_started' in st.session_state and st.session_state.test_started:
+    if st.session_state.current_question < 10:
+        question = words_df.sample().iloc[0]
+        st.session_state.current_question_data = question
+        options = list(words_df['意味'].sample(3))
+        options.append(question['意味'])
+        np.random.shuffle(options)
 
-    if remaining_time > 0:
-        st.write(f"残り時間: {int(remaining_time)}秒")
-        current_word = words[st.session_state['current_index']]
-        user_answer = st.text_input(f"意味を入力してください: {current_word}")
+        st.subheader(f"単語: {question['単語']}")
+        answer = st.radio("意味を選んでください", options)
 
-        if st.button('次へ'):
-            if user_answer == word_dict[current_word]:
-                st.session_state['correct_answers'] += 1
-            st.session_state['current_index'] += 1
-            if st.session_state['current_index'] >= len(words):
-                st.session_state['current_index'] = 0  # ループする
+        if st.button('回答する'):
+            if answer == question['意味']:
+                st.session_state.correct_answers += 1
+            st.session_state.current_question += 1
     else:
-        st.session_state['start'] = False
-        st.write(f"テスト終了！正解数: {st.session_state['correct_answers']}")
-
-# 初期化ボタン
-if st.button('初期化する'):
-    for key in st.session_state.keys():
-        del st.session_state[key]
-    st.experimental_rerun()
+        st.session_state.test_started = False
+        st.write(f"テスト終了！正解数: {st.session_state.correct_answers}/10")
+        st.write(f"正答率: {st.session_state.correct_answers * 10}%")
+else:
+    if 'start_time' in st.session_state:
+        elapsed_time = time.time() - st.session_state.start_time
+        remaining_time = 60 - elapsed_time
+        if remaining_time > 0:
+            st.write(f"残り時間: {int(remaining_time)}秒")
+        else:
+            st.session_state.test_started = False
+            st.write(f"時間切れ！正解数: {st.session_state.correct_answers}/10")
+            st.write(f"正答率: {st.session_state.correct_answers * 10}%")

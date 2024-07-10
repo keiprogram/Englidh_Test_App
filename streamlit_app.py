@@ -27,6 +27,10 @@ if st.button('テストを開始する'):
     st.session_state.current_question = 0
     st.session_state.start_time = time.time()
 
+    st.write("テストが始まりました。")
+    st.write("60秒間でできるだけ多くの問題に回答してください。")
+    st.write("残り時間は以下のように表示されます。")
+
 if 'test_started' in st.session_state and st.session_state.test_started:
     if st.session_state.current_question < 10:
         question = words_df.sample().iloc[0]

@@ -7,7 +7,7 @@ st.set_page_config(page_title="英単語テストアプリ")
 
 # タイトルと説明
 st.title('英単語テストアプリ')
-st.write('英単語をランダムに表示して、勉強をサポートします！')
+st.write('英単語をランダムに表示して、勉強をサポートします')
 
 # Load the data from multiple Excel files
 @st.cache

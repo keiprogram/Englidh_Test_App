@@ -7,7 +7,7 @@ st.set_page_config(page_title="英単語テストアプリ")
 
 # タイトルと説明
 st.title('英単語テストアプリ')
-st.write('英単語をランダムに表示して、勉強をサポートします')
+st.write('英単語をランダムに表示して、勉強をサポートします！')
 
 # Load the data from multiple Excel files
 @st.cache
@@ -20,24 +20,6 @@ def load_data():
 
 words_df = load_data()
 
-# ガチャ機能
-if st.button('ガチャを引く！'):
-    selected_word = words_df.sample().iloc[0]
-    
-    st.session_state.selected_word = selected_word
-    st.session_state.display_meaning = False
-
-if 'selected_word' in st.session_state:
-    st.header(f"単語名: {st.session_state.selected_word['単語']}")
-    if 'レア度' in st.session_state.selected_word:
-        st.subheader(f"レア度: {st.session_state.selected_word['レア度']}")
-
-    if st.button('意味を確認する'):
-        st.session_state.display_meaning = True
-
-    if st.session_state.display_meaning:
-        st.write(f"語の意味: {st.session_state.selected_word['語の意味']}")
-
 # テスト機能
 if st.button('テストを開始する'):
     st.session_state.test_started = True
@@ -49,15 +31,15 @@ if 'test_started' in st.session_state and st.session_state.test_started:
     if st.session_state.current_question < 10:
         question = words_df.sample().iloc[0]
         st.session_state.current_question_data = question
-        options = list(words_df['語の意味'].sample(3))
-        options.append(question['語の意味'])
+        options = list(words_df['意味'].sample(3))
+        options.append(question['意味'])
         np.random.shuffle(options)
 
         st.subheader(f"単語: {question['単語']}")
         answer = st.radio("意味を選んでください", options)
 
         if st.button('回答する'):
-            if answer == question['語の意味']:
+            if answer == question['意味']:
                 st.session_state.correct_answers += 1
             st.session_state.current_question += 1
     else:

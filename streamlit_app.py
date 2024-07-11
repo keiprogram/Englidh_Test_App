@@ -35,6 +35,7 @@ if st.button('テストを開始する'):
     st.session_state.correct_answers = 0
     st.session_state.wrong_answers = []
     st.session_state.current_question = 0
+    st.session_state.start_time = time.time()
     
     st.write("テストが始まりました。")
     st.write("100問のテストです。全ての問題に回答してください。")
@@ -44,8 +45,13 @@ if 'test_started' in st.session_state and st.session_state.test_started:
         question = filtered_words_df.iloc[st.session_state.current_question]
         st.session_state.current_question_data = question
 
+        # 選択肢を作成
+        options = list(filtered_words_df['語の意味'].sample(3))
+        options.append(question['語の意味'])
+        np.random.shuffle(options)
+
         st.subheader(f"単語: {question['単語']}")
-        answer = st.text_input("語の意味を入力してください")
+        answer = st.radio("語の意味を選んでください", options)
 
         if st.button('回答する'):
             if answer == question['語の意味']:
@@ -63,19 +69,3 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             st.write("間違えた単語とその意味:")
             for word, meaning in st.session_state.wrong_answers:
                 st.write(f"単語: {word}, 語の意味: {meaning}")
-else:
-    if 'start_time' in st.session_state:
-        elapsed_time = time.time() - st.session_state.start_time
-        remaining_time = 60 - elapsed_time
-        if remaining_time > 0:
-            st.write(f"残り時間: {int(remaining_time)}秒")
-            st.progress(elapsed_time / 60.0)  # タイマーの進行状況バーを表示
-        else:
-            st.session_state.test_started = False
-            st.write(f"時間切れ！正解数: {st.session_state.correct_answers}/100")
-            st.write(f"正答率: {st.session_state.correct_answers}%")
-            
-            if st.session_state.wrong_answers:
-                st.write("間違えた単語とその意味:")
-                for word, meaning in st.session_state.wrong_answers:
-                    st.write(f"単語: {word}, 語の意味: {meaning}")

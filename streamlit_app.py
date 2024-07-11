@@ -10,7 +10,7 @@ st.title('英単語テストアプリ')
 st.write('英単語を順に表示して、勉強をサポートします！')
 
 # Load the data from multiple Excel files
-@st.cache
+@st.cache_data
 def load_data():
     part1 = pd.read_excel("リープベーシック見出語・用例リスト(Part 1).xlsx")
     part2 = pd.read_excel("リープベーシック見出語・用例リスト(Part 2).xlsx")
@@ -62,8 +62,15 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             st.experimental_rerun()  # ページをリフレッシュして次の問題を表示
     else:
         st.session_state.test_started = False
-        st.write(f"テスト終了！正解数: {st.session_state.correct_answers}/100")
-        st.write(f"正答率: {st.session_state.correct_answers}%")
+        correct_answers = st.session_state.correct_answers
+        total_questions = 100
+        accuracy = correct_answers / total_questions
+        
+        st.write(f"テスト終了！正解数: {correct_answers}/{total_questions}")
+        
+        # 正答率をバーで表示
+        st.write(f"正答率: {accuracy:.0%}")
+        st.progress(accuracy)
         
         if st.session_state.wrong_answers:
             st.write("間違えた単語とその語の意味:")
@@ -78,8 +85,15 @@ else:
             st.progress(elapsed_time / 60.0)  # タイマーの進行状況バーを表示
         else:
             st.session_state.test_started = False
-            st.write(f"時間切れ！正解数: {st.session_state.correct_answers}/100")
-            st.write(f"正答率: {st.session_state.correct_answers}%")
+            correct_answers = st.session_state.correct_answers
+            total_questions = 100
+            accuracy = correct_answers / total_questions
+            
+            st.write(f"時間切れ！正解数: {correct_answers}/{total_questions}")
+            
+            # 正答率をバーで表示
+            st.write(f"正答率: {accuracy:.0%}")
+            st.progress(accuracy)
             
             if st.session_state.wrong_answers:
                 st.write("間違えた単語とその語の意味:")

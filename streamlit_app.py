@@ -20,22 +20,31 @@ def load_data():
 
 words_df = load_data()
 
+# 出題範囲選択
+st.sidebar.title('出題範囲を選択してください')
+ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(14)]
+selected_range = st.sidebar.selectbox("出題範囲", ranges)
+
+# 選択された範囲に基づいてデータをフィルタリング
+range_start, range_end = map(int, selected_range.split('-'))
+filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)]
+
 # テスト機能
 if st.button('テストを開始する'):
     st.session_state.test_started = True
     st.session_state.correct_answers = 0
     st.session_state.current_question = 0
     st.session_state.start_time = time.time()
-
+    
     st.write("テストが始まりました。")
     st.write("60秒間でできるだけ多くの問題に回答してください。")
     st.write("残り時間は以下のように表示されます。")
 
 if 'test_started' in st.session_state and st.session_state.test_started:
     if st.session_state.current_question < 10:
-        question = words_df.sample().iloc[0]
+        question = filtered_words_df.sample().iloc[0]
         st.session_state.current_question_data = question
-        options = list(words_df['語の意味'].sample(3))
+        options = list(filtered_words_df['語の意味'].sample(3))
         options.append(question['語の意味'])
         np.random.shuffle(options)
 

@@ -66,6 +66,22 @@ if 'test_started' in st.session_state and st.session_state.test_started:
         st.write(f"正答率: {st.session_state.correct_answers}%")
         
         if st.session_state.wrong_answers:
-            st.write("間違えた単語とその意味:")
+            st.write("間違えた単語とその語の意味:")
             for word, meaning in st.session_state.wrong_answers:
                 st.write(f"単語: {word}, 語の意味: {meaning}")
+else:
+    if 'start_time' in st.session_state:
+        elapsed_time = time.time() - st.session_state.start_time
+        remaining_time = 60 - elapsed_time
+        if remaining_time > 0:
+            st.write(f"残り時間: {int(remaining_time)}秒")
+            st.progress(elapsed_time / 60.0)  # タイマーの進行状況バーを表示
+        else:
+            st.session_state.test_started = False
+            st.write(f"時間切れ！正解数: {st.session_state.correct_answers}/100")
+            st.write(f"正答率: {st.session_state.correct_answers}%")
+            
+            if st.session_state.wrong_answers:
+                st.write("間違えた単語とその語の意味:")
+                for word, meaning in st.session_state.wrong_answers:
+                    st.write(f"単語: {word}, 語の意味: {meaning}")

@@ -57,7 +57,7 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             if answer == question['語の意味']:
                 st.session_state.correct_answers += 1
             else:
-                st.session_state.wrong_answers.append((question['単語'], question['語の意味']))
+                st.session_state.wrong_answers.append((question['No.'], question['単語'], question['語の意味']))
             st.session_state.current_question += 1
             st.experimental_rerun()  # ページをリフレッシュして次の問題を表示
     else:
@@ -67,8 +67,8 @@ if 'test_started' in st.session_state and st.session_state.test_started:
         
         if st.session_state.wrong_answers:
             st.write("間違えた単語とその語の意味:")
-            for word, meaning in st.session_state.wrong_answers:
-                st.write(f"単語: {word}, 語の意味: {meaning}")
+            for no, word, meaning in st.session_state.wrong_answers:
+                st.write(f"番号: {no}, 単語: {word}, 語の意味: {meaning}")
 else:
     if 'start_time' in st.session_state:
         elapsed_time = time.time() - st.session_state.start_time
@@ -83,5 +83,5 @@ else:
             
             if st.session_state.wrong_answers:
                 st.write("間違えた単語とその語の意味:")
-                for word, meaning in st.session_state.wrong_answers:
-                    st.write(f"単語: {word}, 語の意味: {meaning}")
+                for no, word, meaning in st.session_state.wrong_answers:
+                    st.write(f"番号: {no}, 単語: {word}, 語の意味: {meaning}")

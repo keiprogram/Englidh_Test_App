@@ -29,17 +29,23 @@ selected_range = st.sidebar.selectbox("出題範囲", ranges)
 range_start, range_end = map(int, selected_range.split('-'))
 filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')
 
-# テスト機能
+# テスト開始ボタン
 if st.button('テストを開始する'):
     st.session_state.test_started = True
     st.session_state.correct_answers = 0
     st.session_state.wrong_answers = []
     st.session_state.current_question = 0
     st.session_state.start_time = time.time()
-    
-    st.write("テストが始まりました。")
-    st.write("100問のテストです。全ての問題に回答してください。")
 
+    # 最初の問題を設定
+    st.session_state.current_question_data = filtered_words_df.iloc[st.session_state.current_question]
+    options = list(filtered_words_df['語の意味'].sample(3))
+    options.append(st.session_state.current_question_data['語の意味'])
+    np.random.shuffle(options)
+    st.session_state.options = options
+    st.session_state.answer = None
+
+# 問題更新用の関数
 def update_question():
     if st.session_state.answer == st.session_state.current_question_data['語の意味']:
         st.session_state.correct_answers += 1
@@ -60,20 +66,11 @@ def update_question():
     else:
         st.session_state.test_started = False
 
+# テストが開始された場合の処理
 if 'test_started' in st.session_state and st.session_state.test_started:
     if st.session_state.current_question < 100:
-        if 'current_question_data' not in st.session_state:
-            st.session_state.current_question_data = filtered_words_df.iloc[st.session_state.current_question]
-            options = list(filtered_words_df['語の意味'].sample(3))
-            options.append(st.session_state.current_question_data['語の意味'])
-            np.random.shuffle(options)
-            st.session_state.options = options
-            st.session_state.answer = None
-
         st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
-        
-        if 'options' in st.session_state:
-            st.radio("語の意味を選んでください", st.session_state.options, key='answer', on_change=update_question)
+        st.radio("語の意味を選んでください", st.session_state.options, key='answer', on_change=update_question)
     else:
         st.session_state.test_started = False
         correct_answers = st.session_state.correct_answers

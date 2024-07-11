@@ -40,26 +40,38 @@ if st.button('テストを開始する'):
     st.write("テストが始まりました。")
     st.write("100問のテストです。全ての問題に回答してください。")
 
+def update_question():
+    if st.session_state.answer == st.session_state.current_question_data['語の意味']:
+        st.session_state.correct_answers += 1
+    else:
+        st.session_state.wrong_answers.append((
+            st.session_state.current_question_data['No.'],
+            st.session_state.current_question_data['単語'],
+            st.session_state.current_question_data['語の意味']
+        ))
+    st.session_state.current_question += 1
+    if st.session_state.current_question < 100:
+        st.session_state.current_question_data = filtered_words_df.iloc[st.session_state.current_question]
+        options = list(filtered_words_df['語の意味'].sample(3))
+        options.append(st.session_state.current_question_data['語の意味'])
+        np.random.shuffle(options)
+        st.session_state.options = options
+        st.session_state.answer = None
+    else:
+        st.session_state.test_started = False
+
 if 'test_started' in st.session_state and st.session_state.test_started:
     if st.session_state.current_question < 100:
-        question = filtered_words_df.iloc[st.session_state.current_question]
-        st.session_state.current_question_data = question
+        if 'current_question_data' not in st.session_state:
+            st.session_state.current_question_data = filtered_words_df.iloc[st.session_state.current_question]
+            options = list(filtered_words_df['語の意味'].sample(3))
+            options.append(st.session_state.current_question_data['語の意味'])
+            np.random.shuffle(options)
+            st.session_state.options = options
+            st.session_state.answer = None
 
-        # 選択肢を作成
-        options = list(filtered_words_df['語の意味'].sample(3))
-        options.append(question['語の意味'])
-        np.random.shuffle(options)
-
-        st.subheader(f"単語: {question['単語']}")
-        answer = st.radio("語の意味を選んでください", options)
-
-        if st.button('回答する'):
-            if answer == question['語の意味']:
-                st.session_state.correct_answers += 1
-            else:
-                st.session_state.wrong_answers.append((question['No.'], question['単語'], question['語の意味']))
-            st.session_state.current_question += 1
-            st.experimental_rerun()  # ページをリフレッシュして次の問題を表示
+        st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
+        st.radio("語の意味を選んでください", st.session_state.options, key='answer', on_change=update_question)
     else:
         st.session_state.test_started = False
         correct_answers = st.session_state.correct_answers

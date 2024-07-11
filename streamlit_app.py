@@ -33,6 +33,7 @@ filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.']
 if st.button('テストを開始する'):
     st.session_state.test_started = True
     st.session_state.correct_answers = 0
+    st.session_state.wrong_answers = 0
     st.session_state.current_question = 0
     st.session_state.start_time = time.time()
     
@@ -54,10 +55,13 @@ if 'test_started' in st.session_state and st.session_state.test_started:
         if st.button('回答する'):
             if answer == question['語の意味']:
                 st.session_state.correct_answers += 1
+            else:
+                st.session_state.wrong_answers += 1
             st.session_state.current_question += 1
     else:
         st.session_state.test_started = False
         st.write(f"テスト終了！正解数: {st.session_state.correct_answers}/10")
+        st.write(f"間違えた問題数: {st.session_state.wrong_answers}/10")
         st.write(f"正答率: {st.session_state.correct_answers * 10}%")
 else:
     if 'start_time' in st.session_state:
@@ -69,4 +73,5 @@ else:
         else:
             st.session_state.test_started = False
             st.write(f"時間切れ！正解数: {st.session_state.correct_answers}/10")
+            st.write(f"間違えた問題数: {st.session_state.wrong_answers}/10")
             st.write(f"正答率: {st.session_state.correct_answers * 10}%")

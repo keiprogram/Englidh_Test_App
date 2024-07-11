@@ -7,7 +7,7 @@ st.set_page_config(page_title="英単語テストアプリ")
 
 # タイトルと説明
 st.title('英単語テストアプリ')
-st.write('英単語をランダムに表示して、勉強をサポートします！')
+st.write('英単語を順に表示して、勉強をサポートします！')
 
 # Load the data from multiple Excel files
 @st.cache
@@ -27,42 +27,42 @@ selected_range = st.sidebar.selectbox("出題範囲", ranges)
 
 # 選択された範囲に基づいてデータをフィルタリング
 range_start, range_end = map(int, selected_range.split('-'))
-filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)]
+filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')
 
 # テスト機能
 if st.button('テストを開始する'):
     st.session_state.test_started = True
     st.session_state.correct_answers = 0
-    st.session_state.wrong_answers = 0
+    st.session_state.wrong_answers = []
     st.session_state.current_question = 0
-    st.session_state.start_time = time.time()
     
     st.write("テストが始まりました。")
-    st.write("60秒間でできるだけ多くの問題に回答してください。")
-    st.write("残り時間は以下のように表示されます。")
+    st.write("100問のテストです。全ての問題に回答してください。")
 
 if 'test_started' in st.session_state and st.session_state.test_started:
-    if st.session_state.current_question < 10:
-        question = filtered_words_df.sample().iloc[0]
+    if st.session_state.current_question < 100:
+        question = filtered_words_df.iloc[st.session_state.current_question]
         st.session_state.current_question_data = question
-        options = list(filtered_words_df['語の意味'].sample(3))
-        options.append(question['語の意味'])
-        np.random.shuffle(options)
 
         st.subheader(f"単語: {question['単語']}")
-        answer = st.radio("語の意味を選んでください", options)
+        answer = st.text_input("語の意味を入力してください")
 
         if st.button('回答する'):
             if answer == question['語の意味']:
                 st.session_state.correct_answers += 1
             else:
-                st.session_state.wrong_answers += 1
+                st.session_state.wrong_answers.append((question['単語'], question['語の意味']))
             st.session_state.current_question += 1
+            st.experimental_rerun()  # ページをリフレッシュして次の問題を表示
     else:
         st.session_state.test_started = False
-        st.write(f"テスト終了！正解数: {st.session_state.correct_answers}/10")
-        st.write(f"間違えた問題数: {st.session_state.wrong_answers}/10")
-        st.write(f"正答率: {st.session_state.correct_answers * 10}%")
+        st.write(f"テスト終了！正解数: {st.session_state.correct_answers}/100")
+        st.write(f"正答率: {st.session_state.correct_answers}%")
+        
+        if st.session_state.wrong_answers:
+            st.write("間違えた単語とその意味:")
+            for word, meaning in st.session_state.wrong_answers:
+                st.write(f"単語: {word}, 語の意味: {meaning}")
 else:
     if 'start_time' in st.session_state:
         elapsed_time = time.time() - st.session_state.start_time
@@ -72,6 +72,10 @@ else:
             st.progress(elapsed_time / 60.0)  # タイマーの進行状況バーを表示
         else:
             st.session_state.test_started = False
-            st.write(f"時間切れ！正解数: {st.session_state.correct_answers}/10")
-            st.write(f"間違えた問題数: {st.session_state.wrong_answers}/10")
-            st.write(f"正答率: {st.session_state.correct_answers * 10}%")
+            st.write(f"時間切れ！正解数: {st.session_state.correct_answers}/100")
+            st.write(f"正答率: {st.session_state.correct_answers}%")
+            
+            if st.session_state.wrong_answers:
+                st.write("間違えた単語とその意味:")
+                for word, meaning in st.session_state.wrong_answers:
+                    st.write(f"単語: {word}, 語の意味: {meaning}")

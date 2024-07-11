@@ -71,7 +71,9 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             st.session_state.answer = None
 
         st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
-        st.radio("語の意味を選んでください", st.session_state.options, key='answer', on_change=update_question)
+        
+        if 'options' in st.session_state:
+            st.radio("語の意味を選んでください", st.session_state.options, key='answer', on_change=update_question)
     else:
         st.session_state.test_started = False
         correct_answers = st.session_state.correct_answers

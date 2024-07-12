@@ -84,20 +84,32 @@ def update_timer():
             st.experimental_rerun()  # ページを再レンダリングしてタイマーを更新
         else:
             st.session_state.test_started = False
-            correct_answers = st.session_state.correct_answers
-            total_questions = 100
-            accuracy = correct_answers / total_questions
-            
-            st.write(f"時間切れ！正解数: {correct_answers}/{total_questions}")
-            
-            # 正答率をバーで表示
-            st.write(f"正答率: {accuracy:.0%}")
-            st.progress(accuracy)
-            
-            if st.session_state.wrong_answers:
-                st.write("間違えた単語とその語の意味:")
-                for no, word, meaning in st.session_state.wrong_answers:
-                    st.write(f"番号: {no}, 単語: {word}, 語の意味: {meaning}")
+            display_results()
+
+# テスト終了後の結果表示
+def display_results():
+    correct_answers = st.session_state.correct_answers
+    total_questions = 100
+    accuracy = correct_answers / total_questions
+    wrong_answers = len(st.session_state.wrong_answers)
+
+    st.write(f"テスト終了！正解数: {correct_answers}/{total_questions}")
+    st.progress(accuracy)
+    
+    st.write("正解数と不正解数")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("正解数", correct_answers)
+    with col2:
+        st.metric("不正解数", wrong_answers)
+
+    st.write(f"正答率: {accuracy:.0%}")
+    st.progress(accuracy)
+
+    if st.session_state.wrong_answers:
+        st.write("間違えた単語とその語の意味:")
+        for no, word, meaning in st.session_state.wrong_answers:
+            st.write(f"番号: {no}, 単語: {word}, 語の意味: {meaning}")
 
 # テストが開始された場合の処理
 if 'test_started' in st.session_state and st.session_state.test_started:
@@ -106,21 +118,7 @@ if 'test_started' in st.session_state and st.session_state.test_started:
         st.radio("語の意味を選んでください", st.session_state.options, key='answer', on_change=update_question)
         update_timer()  # タイマーを更新
     else:
-        st.session_state.test_started = False
-        correct_answers = st.session_state.correct_answers
-        total_questions = 100
-        accuracy = correct_answers / total_questions
-        
-        st.write(f"テスト終了！正解数: {correct_answers}/{total_questions}")
-        
-        # 正答率をバーで表示
-        st.write(f"正答率: {accuracy:.0%}")
-        st.progress(accuracy)
-        
-        if st.session_state.wrong_answers:
-            st.write("間違えた単語とその語の意味:")
-            for no, word, meaning in st.session_state.wrong_answers:
-                st.write(f"番号: {no}, 単語: {word}, 語の意味: {meaning}")
+        display_results()
 else:
     if 'start_time' in st.session_state:
         elapsed_time = time.time() - st.session_state.start_time
@@ -130,17 +128,4 @@ else:
             st.progress(elapsed_time / st.session_state.time_limit)  # タイマーの進行状況バーを表示
         else:
             st.session_state.test_started = False
-            correct_answers = st.session_state.correct_answers
-            total_questions = 100
-            accuracy = correct_answers / total_questions
-            
-            st.write(f"時間切れ！正解数: {correct_answers}/{total_questions}")
-            
-            # 正答率をバーで表示
-            st.write(f"正答率: {accuracy:.0%}")
-            st.progress(accuracy)
-            
-            if st.session_state.wrong_answers:
-                st.write("間違えた単語とその語の意味:")
-                for no, word, meaning in st.session_state.wrong_answers:
-                    st.write(f"番号: {no}, 単語: {word}, 語の意味: {meaning}")
+            display_results()

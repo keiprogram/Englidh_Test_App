@@ -39,9 +39,10 @@ if st.button('テストを開始する'):
 
     # 最初の問題を設定
     st.session_state.current_question_data = filtered_words_df.iloc[st.session_state.current_question]
-    options = list(filtered_words_df['語の意味'].sample(3))
+    options = list(filtered_words_df['語の意味'].sample(5))
     options.append(st.session_state.current_question_data['語の意味'])
     np.random.shuffle(options)
+    options.append('わからない')  # "わからない"を選択肢に追加
     st.session_state.options = options
     st.session_state.answer = None
 
@@ -58,9 +59,10 @@ def update_question():
     st.session_state.current_question += 1
     if st.session_state.current_question < 100:
         st.session_state.current_question_data = filtered_words_df.iloc[st.session_state.current_question]
-        options = list(filtered_words_df['語の意味'].sample(3))
+        options = list(filtered_words_df['語の意味'].sample(5))
         options.append(st.session_state.current_question_data['語の意味'])
         np.random.shuffle(options)
+        options.append('わからない')  # "わからない"を選択肢に追加
         st.session_state.options = options
         st.session_state.answer = None
     else:

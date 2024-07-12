@@ -39,7 +39,7 @@ if st.button('テストを開始する'):
 
     # 最初の問題を設定
     st.session_state.current_question_data = filtered_words_df.iloc[st.session_state.current_question]
-    options = list(filtered_words_df['語の意味'].sample(5))
+    options = list(filtered_words_df['語の意味'].sample(4))
     options.append(st.session_state.current_question_data['語の意味'])
     np.random.shuffle(options)
     options.append('わからない')  # "わからない"を選択肢に追加

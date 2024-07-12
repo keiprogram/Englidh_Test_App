@@ -40,6 +40,7 @@ if st.button('テストを開始する'):
     st.session_state.current_question = 0
     st.session_state.start_time = time.time()
     st.session_state.time_limit = time_limit
+    st.session_state.finished = False
 
     # 最初の問題を設定
     st.session_state.current_question_data = filtered_words_df.iloc[st.session_state.current_question]
@@ -71,13 +72,14 @@ def update_question():
         st.session_state.answer = None
     else:
         st.session_state.test_started = False
+        st.session_state.finished = True
 
 # 残り時間の表示と更新
 def update_timer():
     if 'start_time' in st.session_state:
         elapsed_time = time.time() - st.session_state.start_time
         remaining_time = st.session_state.time_limit - elapsed_time
-        if remaining_time > 0:
+        if remaining_time > 0 and not st.session_state.finished:
             st.write(f"残り時間: {int(remaining_time)}秒")
             st.progress(elapsed_time / st.session_state.time_limit)  # タイマーの進行状況バーを表示
             time.sleep(1)
@@ -123,7 +125,7 @@ else:
     if 'start_time' in st.session_state:
         elapsed_time = time.time() - st.session_state.start_time
         remaining_time = st.session_state.time_limit - elapsed_time
-        if remaining_time > 0:
+        if remaining_time > 0 and not st.session_state.finished:
             st.write(f"残り時間: {int(remaining_time)}秒")
             st.progress(elapsed_time / st.session_state.time_limit)  # タイマーの進行状況バーを表示
         else:

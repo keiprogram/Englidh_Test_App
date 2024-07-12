@@ -68,11 +68,39 @@ def update_question():
     else:
         st.session_state.test_started = False
 
+# 残り時間の表示と更新
+def update_timer():
+    if 'start_time' in st.session_state:
+        elapsed_time = time.time() - st.session_state.start_time
+        remaining_time = 60 - elapsed_time
+        if remaining_time > 0:
+            st.write(f"残り時間: {int(remaining_time)}秒")
+            st.progress(elapsed_time / 60.0)  # タイマーの進行状況バーを表示
+            time.sleep(1)
+            st.experimental_rerun()  # ページを再レンダリングしてタイマーを更新
+        else:
+            st.session_state.test_started = False
+            correct_answers = st.session_state.correct_answers
+            total_questions = 100
+            accuracy = correct_answers / total_questions
+            
+            st.write(f"時間切れ！正解数: {correct_answers}/{total_questions}")
+            
+            # 正答率をバーで表示
+            st.write(f"正答率: {accuracy:.0%}")
+            st.progress(accuracy)
+            
+            if st.session_state.wrong_answers:
+                st.write("間違えた単語とその語の意味:")
+                for no, word, meaning in st.session_state.wrong_answers:
+                    st.write(f"番号: {no}, 単語: {word}, 語の意味: {meaning}")
+
 # テストが開始された場合の処理
 if 'test_started' in st.session_state and st.session_state.test_started:
     if st.session_state.current_question < 100:
         st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
         st.radio("語の意味を選んでください", st.session_state.options, key='answer', on_change=update_question)
+        update_timer()  # タイマーを更新
     else:
         st.session_state.test_started = False
         correct_answers = st.session_state.correct_answers

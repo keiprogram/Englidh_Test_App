@@ -32,6 +32,9 @@ filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.']
 # 制限時間の設定
 time_limit = st.sidebar.slider("制限時間 (秒)", min_value=60, max_value=600, value=60, step=10)
 
+# テスト形式選択
+test_type = st.sidebar.radio("テスト形式を選択してください", ('英語→日本語', '日本語→英語'))
+
 # テスト開始ボタン
 if st.button('テストを開始する'):
     st.session_state.test_started = True
@@ -44,8 +47,12 @@ if st.button('テストを開始する'):
 
     # 最初の問題を設定
     st.session_state.current_question_data = filtered_words_df.iloc[st.session_state.current_question]
-    options = list(filtered_words_df['語の意味'].sample(3))
-    options.append(st.session_state.current_question_data['語の意味'])
+    if test_type == '英語→日本語':
+        options = list(filtered_words_df['語の意味'].sample(3))
+        options.append(st.session_state.current_question_data['語の意味'])
+    else:
+        options = list(filtered_words_df['単語'].sample(3))
+        options.append(st.session_state.current_question_data['単語'])
     options.append("わからない")
     np.random.shuffle(options)
     st.session_state.options = options
@@ -53,19 +60,30 @@ if st.button('テストを開始する'):
 
 # 問題更新用の関数
 def update_question():
-    if st.session_state.answer == st.session_state.current_question_data['語の意味']:
+    if test_type == '英語→日本語':
+        correct_answer = st.session_state.current_question_data['語の意味']
+        question_word = st.session_state.current_question_data['単語']
+    else:
+        correct_answer = st.session_state.current_question_data['単語']
+        question_word = st.session_state.current_question_data['語の意味']
+
+    if st.session_state.answer == correct_answer:
         st.session_state.correct_answers += 1
     else:
         st.session_state.wrong_answers.append((
             st.session_state.current_question_data['No.'],
-            st.session_state.current_question_data['単語'],
-            st.session_state.current_question_data['語の意味']
+            question_word,
+            correct_answer
         ))
     st.session_state.current_question += 1
     if st.session_state.current_question < 100:
         st.session_state.current_question_data = filtered_words_df.iloc[st.session_state.current_question]
-        options = list(filtered_words_df['語の意味'].sample(3))
-        options.append(st.session_state.current_question_data['語の意味'])
+        if test_type == '英語→日本語':
+            options = list(filtered_words_df['語の意味'].sample(3))
+            options.append(st.session_state.current_question_data['語の意味'])
+        else:
+            options = list(filtered_words_df['単語'].sample(3))
+            options.append(st.session_state.current_question_data['単語'])
         options.append("わからない")
         np.random.shuffle(options)
         st.session_state.options = options
@@ -116,8 +134,11 @@ def display_results():
 # テストが開始された場合の処理
 if 'test_started' in st.session_state and st.session_state.test_started:
     if st.session_state.current_question < 100:
-        st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
-        st.radio("語の意味を選んでください", st.session_state.options, key='answer', on_change=update_question)
+        if test_type == '英語→日本語':
+            st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
+        else:
+            st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
+        st.radio("選択してください", st.session_state.options, key='answer', on_change=update_question)
         update_timer()  # タイマーを更新
     else:
         display_results()

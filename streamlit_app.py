@@ -5,6 +5,19 @@ import time
 
 st.set_page_config(page_title="英単語テストアプリ")
 
+# CSS for custom background
+st.markdown(
+    """
+    <style>
+    .main {
+        background: linear-gradient(180deg, #f4efd1 60%, #df3b1f 40%);
+        height: 100vh;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # タイトルと説明
 st.title('英単語テストアプリ')
 st.write('英単語を順に表示して、勉強をサポートします！')
@@ -20,11 +33,6 @@ def load_data():
 
 words_df = load_data()
 
-# テスト形式選択 (トグルボタン風)
-st.sidebar.title("テスト形式を選択してください")
-test_type = st.sidebar.radio("", ('英語→日本語', '日本語→英語'), horizontal=True)
-
-
 # 出題範囲選択
 st.sidebar.title('出題範囲を選択してください')
 ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(14)]
@@ -35,9 +43,11 @@ range_start, range_end = map(int, selected_range.split('-'))
 filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')
 
 # 制限時間の設定
-st.sidebar.title("制限時間を60秒から600秒の範囲で選択してください")
 time_limit = st.sidebar.slider("制限時間 (秒)", min_value=60, max_value=600, value=60, step=10)
 
+# テスト形式選択 (トグルボタン風)
+st.sidebar.title("テスト形式を選択してください")
+test_type = st.sidebar.radio("", ('英語→日本語', '日本語→英語'), horizontal=True)
 
 # テスト開始ボタン
 if st.button('テストを開始する'):

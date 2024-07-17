@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import time
 
-st.set_page_config(page_title="英単語テストアプリ")
+st.set_page_config(page_title="英単語テスト")
 
 # CSS for custom background
 st.markdown(
@@ -13,14 +13,18 @@ st.markdown(
         background: linear-gradient(180deg, #f4efd1 70%, #df3b1f 30%);
         height: 100vh;
     }
+    .title{
+         text-align:center;
+         color:white;
+    }
     </style>
     """,
     unsafe_allow_html=True
 )
 
 # タイトルと説明
-st.title('英単語テストアプリ')
-st.write('英単語を順に表示して、勉強をサポートします！')
+st.title('英単語テスト')
+st.write('正しい選択肢を選択する形式のテストです')
 
 # Load the data from multiple Excel files
 @st.cache_data

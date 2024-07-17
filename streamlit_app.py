@@ -3,28 +3,24 @@ import pandas as pd
 import numpy as np
 import time
 
-st.set_page_config(page_title="英単語テスト")
+st.set_page_config(page_title="英単語テストアプリ")
 
 # CSS for custom background
 st.markdown(
     """
     <style>
     .main {
-        background: linear-gradient(180deg, #f4efd1 70%, #df3b1f 30%);
+        background: linear-gradient(180deg, #f4efd1 60%, #df3b1f 40%);
         height: 100vh;
     }
-    .centered-title {
-        text-align: center;
-        }
-        
     </style>
     """,
     unsafe_allow_html=True
 )
 
 # タイトルと説明
-st.title('英単語テスト')
-st.write('正しい選択肢を選択する形式のテストです')
+st.title('英単語テストアプリ')
+st.write('英単語を順に表示して、勉強をサポートします！')
 
 # Load the data from multiple Excel files
 @st.cache_data
@@ -57,11 +53,11 @@ test_type = st.sidebar.radio("", ('英語→日本語', '日本語→英語'), h
 if st.button('テストを開始する'):
     st.session_state.test_started = True
     st.session_state.correct_answers = 0
-    st.session_state.wrong_answers = []
     st.session_state.current_question = 0
     st.session_state.start_time = time.time()
     st.session_state.time_limit = time_limit
     st.session_state.finished = False
+    st.session_state.wrong_answers = []
 
     # 最初の問題を設定
     st.session_state.current_question_data = filtered_words_df.iloc[st.session_state.current_question]
@@ -128,8 +124,8 @@ def update_timer():
 def display_results():
     correct_answers = st.session_state.correct_answers
     total_questions = 100
+    wrong_answers = total_questions - correct_answers
     accuracy = correct_answers / total_questions
-    wrong_answers = len(st.session_state.wrong_answers)
 
     st.write(f"テスト終了！正解数: {correct_answers}/{total_questions}")
     st.progress(accuracy)

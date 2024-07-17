@@ -13,10 +13,10 @@ st.markdown(
         background: linear-gradient(180deg, #f4efd1 70%, #df3b1f 30%);
         height: 100vh;
     }
-    st.title{
-         text-align:center;
-         color:white;
-    }
+    .centered-title {
+        text-align: center;
+        }
+        
     </style>
     """,
     unsafe_allow_html=True

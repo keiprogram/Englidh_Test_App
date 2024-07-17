@@ -10,7 +10,7 @@ st.markdown(
     """
     <style>
     .main {
-        background: linear-gradient(180deg, #f4efd1 80%, #df3b1f 20%);
+        background: linear-gradient(180deg, #f4efd1 90%, #df3b1f 10%);
         height: 100vh;
     }
     </style>

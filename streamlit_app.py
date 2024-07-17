@@ -43,6 +43,7 @@ range_start, range_end = map(int, selected_range.split('-'))
 filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')
 
 # 制限時間の設定
+st.sidebar.title("制限時間を60~600秒の範囲で指定してください")
 time_limit = st.sidebar.slider("制限時間 (秒)", min_value=60, max_value=600, value=60, step=10)
 
 # テスト形式選択 (トグルボタン風)

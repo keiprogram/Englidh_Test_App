@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import time
-import requests
 
 st.set_page_config(page_title="英単語テスト")
 
@@ -50,6 +49,7 @@ filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.']
 # 制限時間の設定
 st.sidebar.title("制限時間を60~600秒の範囲で指定してください")
 time_limit = st.sidebar.slider("制限時間 (秒)", min_value=60, max_value=600, value=60, step=10)
+
 
 # テスト開始ボタン
 if st.button('テストを開始する'):
@@ -107,7 +107,6 @@ def update_question():
     else:
         st.session_state.test_started = False
         st.session_state.finished = True
-        display_results()
 
 # 残り時間の表示と更新
 def update_timer():
@@ -147,29 +146,6 @@ def display_results():
         st.write("間違えた単語とその語の意味:")
         for no, word, meaning in st.session_state.wrong_answers:
             st.write(f"番号: {no}, 単語: {word}, 語の意味: {meaning}")
-
-    # ランキングに結果を送信
-    username = st.text_input("ユーザー名を入力してください")
-    if username and st.button("結果を送信"):
-        response = requests.post("http://localhost:5000/submit", json={
-            "username": username,
-            "correct_answers": correct_answers
-        })
-        if response.status_code == 201:
-            st.success("結果が送信されました！")
-        else:
-            st.error("結果の送信に失敗しました。")
-
-    # ランキングの表示
-    if st.button("ランキングを表示"):
-        response = requests.get("http://localhost:5000/ranking")
-        if response.status_code == 200:
-            ranking = response.json()
-            st.write("ランキングトップ10")
-            for i, entry in enumerate(ranking):
-                st.write(f"{i + 1}. {entry['username']} - {entry['correct_answers']}正解")
-        else:
-            st.error("ランキングの取得に失敗しました。")
 
 # テストが開始された場合の処理
 if 'test_started' in st.session_state and st.session_state.test_started:

@@ -33,6 +33,10 @@ def load_data():
 
 words_df = load_data()
 
+# テスト形式選択 (トグルボタン風)
+st.sidebar.title("テスト形式を選択してください")
+test_type = st.sidebar.radio("", ('英語→日本語', '日本語→英語'), horizontal=True)
+
 # 出題範囲選択
 st.sidebar.title('出題範囲を選択してください')
 ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(14)]
@@ -46,9 +50,6 @@ filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.']
 st.sidebar.title("制限時間を60~600秒の範囲で指定してください")
 time_limit = st.sidebar.slider("制限時間 (秒)", min_value=60, max_value=600, value=60, step=10)
 
-# テスト形式選択 (トグルボタン風)
-st.sidebar.title("テスト形式を選択してください")
-test_type = st.sidebar.radio("", ('英語→日本語', '日本語→英語'), horizontal=True)
 
 # テスト開始ボタン
 if st.button('テストを開始する'):

@@ -145,7 +145,9 @@ def display_results():
     st.progress(accuracy)
 
     if wrong_answers:
-        st.write("間違えた単語とその語の意味:")
+        st.write("間違えた単語とその語の意味 (番号の小さい順):")
+        # 番号の小さい順にソート
+        wrong_answers.sort(key=lambda x: x[0])
         for no, word, meaning in wrong_answers:
             st.write(f"番号: {no}, 単語: {word}, 語の意味: {meaning}")
 

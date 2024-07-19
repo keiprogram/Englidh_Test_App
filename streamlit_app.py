@@ -107,7 +107,7 @@ def update_question():
         st.session_state.options = options
         st.session_state.answer = None
     else:
-        st.session_state.finished = True  # 全問題解答後に終了フラグを立てる
+        st.session_state.finished = True
 
 # 残り時間の表示と更新
 def update_timer():
@@ -119,10 +119,9 @@ def update_timer():
             st.progress(elapsed_time / st.session_state.time_limit)  # タイマーの進行状況バーを表示
             time.sleep(1)
             st.experimental_rerun()  # ページを再レンダリングしてタイマーを更新
-        else:
-            if not st.session_state.finished:  # テストが終了していない場合
-                st.session_state.finished = True
-                display_results()
+        elif remaining_time <= 0:
+            st.session_state.finished = True
+            display_results()
 
 # テスト終了後の結果表示
 def display_results():
@@ -169,7 +168,6 @@ else:
         if remaining_time > 0 and not st.session_state.finished:
             st.write(f"残り時間: {int(remaining_time)}秒")
             st.progress(elapsed_time / st.session_state.time_limit)  # タイマーの進行状況バーを表示
-        else:
-            if not st.session_state.finished:  # テストが終了していない場合
-                st.session_state.finished = True
-                display_results()
+        elif remaining_time <= 0:
+            st.session_state.finished = True
+            display_results()

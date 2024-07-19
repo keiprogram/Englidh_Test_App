@@ -46,9 +46,6 @@ selected_range = st.sidebar.selectbox("出題範囲", ranges)
 range_start, range_end = map(int, selected_range.split('-'))
 filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')
 
-# フィルタリングされたデータから順番に100問を選択（範囲内の単語数が100未満の場合、範囲内のすべての単語を使用）
-filtered_words_df = filtered_words_df.head(100)
-
 # 制限時間の設定
 st.sidebar.title("制限時間を60~600秒の範囲で指定してください")
 time_limit = st.sidebar.slider("制限時間 (秒)", min_value=60, max_value=600, value=60, step=10)
@@ -63,13 +60,18 @@ if st.button('テストを開始する'):
     st.session_state.finished = False
     st.session_state.wrong_answers = []
 
+    # ランダムに50問を選択
+    selected_questions = filtered_words_df.sample(50).reset_index(drop=True)
+    st.session_state.selected_questions = selected_questions
+    st.session_state.total_questions = len(selected_questions)
+
     # 最初の問題を設定
-    st.session_state.current_question_data = filtered_words_df.iloc[st.session_state.current_question]
+    st.session_state.current_question_data = selected_questions.iloc[st.session_state.current_question]
     if test_type == '英語→日本語':
-        options = list(filtered_words_df['語の意味'].sample(3))
+        options = list(selected_questions['語の意味'].sample(3))
         options.append(st.session_state.current_question_data['語の意味'])
     else:
-        options = list(filtered_words_df['単語'].sample(3))
+        options = list(selected_questions['単語'].sample(3))
         options.append(st.session_state.current_question_data['単語'])
     options.append("わからない")
     np.random.shuffle(options)
@@ -94,19 +96,20 @@ def update_question():
             correct_answer
         ))
     st.session_state.current_question += 1
-    if st.session_state.current_question < len(filtered_words_df):
-        st.session_state.current_question_data = filtered_words_df.iloc[st.session_state.current_question]
+    if st.session_state.current_question < st.session_state.total_questions:
+        st.session_state.current_question_data = st.session_state.selected_questions.iloc[st.session_state.current_question]
         if test_type == '英語→日本語':
-            options = list(filtered_words_df['語の意味'].sample(3))
+            options = list(st.session_state.selected_questions['語の意味'].sample(3))
             options.append(st.session_state.current_question_data['語の意味'])
         else:
-            options = list(filtered_words_df['単語'].sample(3))
+            options = list(st.session_state.selected_questions['単語'].sample(3))
             options.append(st.session_state.current_question_data['単語'])
         options.append("わからない")
         np.random.shuffle(options)
         st.session_state.options = options
         st.session_state.answer = None
     else:
+        st.session_state.test_started = False
         st.session_state.finished = True
 
 # 残り時間の表示と更新
@@ -126,8 +129,8 @@ def update_timer():
 # テスト終了後の結果表示
 def display_results():
     correct_answers = st.session_state.correct_answers
-    total_questions = len(filtered_words_df)
-    wrong_answers = total_questions - correct_answers
+    total_questions = st.session_state.total_questions
+    wrong_answers = [wa for wa in st.session_state.wrong_answers if wa[0] in st.session_state.selected_questions['No.'].values]
     accuracy = correct_answers / total_questions
 
     st.write(f"テスト終了！正解数: {correct_answers}/{total_questions}")
@@ -138,19 +141,19 @@ def display_results():
     with col1:
         st.metric("正解数", correct_answers)
     with col2:
-        st.metric("不正解数", wrong_answers)
+        st.metric("不正解数", total_questions - correct_answers)
 
     st.write(f"正答率: {accuracy:.0%}")
     st.progress(accuracy)
 
-    if st.session_state.wrong_answers:
+    if wrong_answers:
         st.write("間違えた単語とその語の意味:")
-        for no, word, meaning in st.session_state.wrong_answers:
+        for no, word, meaning in wrong_answers:
             st.write(f"番号: {no}, 単語: {word}, 語の意味: {meaning}")
 
 # テストが開始された場合の処理
 if 'test_started' in st.session_state and st.session_state.test_started:
-    if st.session_state.current_question < len(filtered_words_df):
+    if st.session_state.current_question < st.session_state.total_questions:
         if test_type == '英語→日本語':
             st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
         else:

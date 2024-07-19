@@ -73,7 +73,6 @@ if st.button('テストを開始する'):
     else:
         options = list(selected_questions['単語'].sample(3))
         options.append(st.session_state.current_question_data['単語'])
-    options.append("わからない")
     np.random.shuffle(options)
     st.session_state.options = options
     st.session_state.answer = None
@@ -104,7 +103,6 @@ def update_question():
         else:
             options = list(st.session_state.selected_questions['単語'].sample(3))
             options.append(st.session_state.current_question_data['単語'])
-        options.append("わからない")
         np.random.shuffle(options)
         st.session_state.options = options
         st.session_state.answer = None

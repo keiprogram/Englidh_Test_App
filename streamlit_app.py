@@ -1,27 +1,3 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-import time
-
-st.set_page_config(page_title="英単語テスト")
-
-# CSS for custom background
-st.markdown(
-    """
-    <style>
-    .main {
-        background: linear-gradient(180deg, #f4efd1 80%, #df3b1f 20%);
-        height: 100vh;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# タイトルと説明
-st.title('英単語テスト')
-st.write('英単語を順に表示して、勉強をサポートします！')
-
 # Load the data from multiple Excel files
 @st.cache_data
 def load_data():
@@ -32,6 +8,9 @@ def load_data():
     return pd.concat([part1, part2, part3, part4], ignore_index=True)
 
 words_df = load_data()
+
+# Display the first few rows of the dataframe to check column names
+st.write(words_df.head())
 
 # Select a random sample of 50 words for the test
 test_words_df = words_df.sample(n=50, random_state=1).reset_index(drop=True)
@@ -75,4 +54,4 @@ else:
         st.write("間違えた単語:")
         for word, correct_option in st.session_state.incorrect_words:
             st.write(f"{word}: {correct_option}")
-
+ああ

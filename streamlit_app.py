@@ -6,7 +6,7 @@ import time
 from PIL import Image
 
 # ファイルパスを設定
-file_path = "/mnt/data/English Logo.png"
+file_path = "/mnt/English Logo.png"
 
 # ファイルが存在するか確認
 if not os.path.exists(file_path):

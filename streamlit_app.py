@@ -2,8 +2,12 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import time
+from PIL import Image
 
-st.set_page_config(page_title="英単語テスト")
+# Load the image
+logo = Image.open("/mnt/data/English Logo.png")
+
+st.set_page_config(page_title="英単語テスト", page_icon=logo)
 
 # CSS for custom background
 st.markdown(

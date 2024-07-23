@@ -33,52 +33,141 @@ def load_data():
 
 words_df = load_data()
 
-# Define the range options for the test
-total_words = len(words_df)
-range_options = [(i, min(i+99, total_words-1)) for i in range(0, total_words, 100)]
+# テスト形式選択 (トグルボタン風)
+st.sidebar.title("テスト形式を選択してください")
+test_type = st.sidebar.radio("", ('英語→日本語', '日本語→英語'), horizontal=True)
 
-# Select the range for the test
-selected_range = st.selectbox('出題範囲を選択してください:', range_options, format_func=lambda x: f"{x[0]+1}-{x[1]+1}")
+# 出題範囲選択
+st.sidebar.title('出題範囲を選択してください')
+ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(14)]
+selected_range = st.sidebar.selectbox("出題範囲", ranges)
 
-# Filter words based on the selected range
-filtered_words_df = words_df.iloc[selected_range[0]:selected_range[1]+1]
+# 選択された範囲に基づいてデータをフィルタリング
+range_start, range_end = map(int, selected_range.split('-'))
+filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')
 
-# Select a random sample of 50 words for the test
-test_words_df = filtered_words_df.sample(n=50, random_state=1).reset_index(drop=True)
+# 制限時間の設定
+st.sidebar.title("制限時間を60~600秒の範囲で指定してください")
+time_limit = st.sidebar.slider("制限時間 (秒)", min_value=60, max_value=600, value=60, step=10)
 
-# Variables to track the test state
-if 'current_index' not in st.session_state:
-    st.session_state.current_index = 0
-if 'score' not in st.session_state:
-    st.session_state.score = 0
-if 'incorrect_words' not in st.session_state:
-    st.session_state.incorrect_words = []
+# テスト開始ボタン
+if st.button('テストを開始する'):
+    st.session_state.test_started = True
+    st.session_state.correct_answers = 0
+    st.session_state.current_question = 0
+    st.session_state.start_time = time.time()
+    st.session_state.time_limit = time_limit
+    st.session_state.finished = False
+    st.session_state.wrong_answers = []
 
-# Function to evaluate the answer and update the score
-def evaluate_answer(index, answer, correct_option):
-    if answer == correct_option:
-        st.session_state.score += 1
+    # ランダムに50問を選択
+    selected_questions = filtered_words_df.sample(50).reset_index(drop=True)
+    st.session_state.selected_questions = selected_questions
+    st.session_state.total_questions = len(selected_questions)
+
+    # 最初の問題を設定
+    st.session_state.current_question_data = selected_questions.iloc[st.session_state.current_question]
+    if test_type == '英語→日本語':
+        options = list(selected_questions['語の意味'].sample(3))
+        options.append(st.session_state.current_question_data['語の意味'])
     else:
-        st.session_state.incorrect_words.append((test_words_df.iloc[index]['単語'], correct_option))
-    st.session_state.current_index += 1
-    st.experimental_rerun()
+        options = list(selected_questions['単語'].sample(3))
+        options.append(st.session_state.current_question_data['単語'])
+    np.random.shuffle(options)
+    st.session_state.options = options
+    st.session_state.answer = None
 
-# Function to present the current word and options
-def present_question(index):
-    word = test_words_df.iloc[index]['単語']
-    options = test_words_df.sample(n=4)['語の意味'].tolist()
-    correct_option = test_words_df.iloc[index]['語の意味']
-    if correct_option not in options:
-        options[np.random.randint(0, 4)] = correct_option
-    st.write(f"問題 {index + 1}: {word} の意味は？")
-    answer = st.radio("選択肢", options, key=f"question_{index}", on_change=evaluate_answer, args=(index, answer, correct_option))
+# 問題更新用の関数
+def update_question():
+    if test_type == '英語→日本語':
+        correct_answer = st.session_state.current_question_data['語の意味']
+        question_word = st.session_state.current_question_data['単語']
+    else:
+        correct_answer = st.session_state.current_question_data['単語']
+        question_word = st.session_state.current_question_data['語の意味']
 
-# Main test loop
-if st.session_state.current_index < len(test_words_df):
-    present_question(st.session_state.current_index)
+    if st.session_state.answer == correct_answer:
+        st.session_state.correct_answers += 1
+    else:
+        st.session_state.wrong_answers.append((
+            st.session_state.current_question_data['No.'],
+            question_word,
+            correct_answer
+        ))
+    st.session_state.current_question += 1
+    if st.session_state.current_question < st.session_state.total_questions:
+        st.session_state.current_question_data = st.session_state.selected_questions.iloc[st.session_state.current_question]
+        if test_type == '英語→日本語':
+            options = list(st.session_state.selected_questions['語の意味'].sample(3))
+            options.append(st.session_state.current_question_data['語の意味'])
+        else:
+            options = list(st.session_state.selected_questions['単語'].sample(3))
+            options.append(st.session_state.current_question_data['単語'])
+        np.random.shuffle(options)
+        st.session_state.options = options
+        st.session_state.answer = None
+    else:
+        st.session_state.finished = True
+
+# 残り時間の表示と更新
+def update_timer():
+    if 'start_time' in st.session_state:
+        elapsed_time = time.time() - st.session_state.start_time
+        remaining_time = st.session_state.time_limit - elapsed_time
+        if remaining_time > 0 and not st.session_state.finished:
+            st.write(f"残り時間: {int(remaining_time)}秒")
+            st.progress(elapsed_time / st.session_state.time_limit)  # タイマーの進行状況バーを表示
+            time.sleep(1)
+            st.experimental_rerun()  # ページを再レンダリングしてタイマーを更新
+        elif remaining_time <= 0:
+            st.session_state.finished = True
+            display_results()
+
+# テスト終了後の結果表示
+def display_results():
+    correct_answers = st.session_state.correct_answers
+    total_questions = st.session_state.total_questions
+    wrong_answers = [wa for wa in st.session_state.wrong_answers if wa[0] in st.session_state.selected_questions['No.'].values]
+    accuracy = correct_answers / total_questions
+
+    st.write(f"テスト終了！正解数: {correct_answers}/{total_questions}")
+    st.progress(accuracy)
+    
+    st.write("正解数と不正解数")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("正解数", correct_answers)
+    with col2:
+        st.metric("不正解数", total_questions - correct_answers)
+
+    st.write(f"正答率: {accuracy:.0%}")
+    st.progress(accuracy)
+
+    if wrong_answers:
+        st.write("間違えた単語とその語の意味 (番号の小さい順):")
+        # 番号の小さい順にソート
+        wrong_answers.sort(key=lambda x: x[0])
+        for no, word, meaning in wrong_answers:
+            st.write(f"番号: {no}, 単語: {word}, 語の意味: {meaning}")
+
+# テストが開始された場合の処理
+if 'test_started' in st.session_state and st.session_state.test_started:
+    if st.session_state.current_question < st.session_state.total_questions:
+        if test_type == '英語→日本語':
+            st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
+        else:
+            st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
+        st.radio("選択してください", st.session_state.options, key='answer', on_change=update_question)
+        update_timer()  # タイマーを更新
+    else:
+        display_results()
 else:
-    st.write(f"テスト終了！ スコア: {st.session_state.score}/50")
-    if st.session_state.incorrect_words:
-        st.write("間違えた単語:")
-        for word, correct_option in st.session_state.incorrect_words:
-            st.write(f"{word}: {correct_option}")
+    if 'start_time' in st.session_state:
+        elapsed_time = time.time() - st.session_state.start_time
+        remaining_time = st.session_state.time_limit - elapsed_time
+        if remaining_time > 0 and not st.session_state.finished:
+            st.write(f"残り時間: {int(remaining_time)}秒")
+            st.progress(elapsed_time / st.session_state.time_limit)  # タイマーの進行状況バーを表
+        elif remaining_time <= 0:
+            st.session_state.finished = True
+            display_results()

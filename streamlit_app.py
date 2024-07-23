@@ -116,8 +116,7 @@ def update_timer():
         remaining_time = st.session_state.time_limit - elapsed_time
         if remaining_time > 0 and not st.session_state.finished:
             st.write(f"残り時間: {int(remaining_time)}秒")
-            st.progress(elapsed_time / st.session_state.time_limit)  # タイマーの進行状況バーを表示
-            time.sleep(1)
+            st.progress((st.session_state.time_limit - remaining_time) / st.session_state.time_limit)  # タイマーの進行状況バーを表示
             st.experimental_rerun()  # ページを再レンダリングしてタイマーを更新
         elif remaining_time <= 0:
             st.session_state.finished = True
@@ -167,7 +166,4 @@ else:
         remaining_time = st.session_state.time_limit - elapsed_time
         if remaining_time > 0 and not st.session_state.finished:
             st.write(f"残り時間: {int(remaining_time)}秒")
-            st.progress(elapsed_time / st.session_state.time_limit)  # タイマーの進行状況バーを表
-        elif remaining_time <= 0:
-            st.session_state.finished = True
-            display_results()
+            st.progress((st.session_state.time_limit - remaining_time) / st.session_state.time_limit)  # タイマーの進行状況バーを表示

@@ -1,3 +1,27 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import time
+
+st.set_page_config(page_title="英単語テスト")
+
+# CSS for custom background
+st.markdown(
+    """
+    <style>
+    .main {
+        background: linear-gradient(180deg, #f4efd1 80%, #df3b1f 20%);
+        height: 100vh;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# タイトルと説明
+st.title('英単語テスト')
+st.write('英単語を順に表示して、勉強をサポートします！')
+
 # Load the data from multiple Excel files
 @st.cache_data
 def load_data():
@@ -25,9 +49,9 @@ if 'incorrect_words' not in st.session_state:
 
 # Function to present the current word and options
 def present_question(index):
-    word = test_words_df.iloc[index]['英単語']
-    options = test_words_df.sample(n=4)['意味'].tolist()
-    correct_option = test_words_df.iloc[index]['意味']
+    word = test_words_df.iloc[index]['単語']
+    options = test_words_df.sample(n=4)['語の意味'].tolist()
+    correct_option = test_words_df.iloc[index]['語の意味']
     if correct_option not in options:
         options[np.random.randint(0, 4)] = correct_option
     st.write(f"問題 {index + 1}: {word} の意味は？")
@@ -39,7 +63,7 @@ def evaluate_answer(answer, correct_option):
     if answer == correct_option:
         st.session_state.score += 1
     else:
-        st.session_state.incorrect_words.append((word, correct_option))
+        st.session_state.incorrect_words.append((test_words_df.iloc[st.session_state.current_index]['単語'], correct_option))
 
 # Main test loop
 if st.session_state.current_index < len(test_words_df):
@@ -54,4 +78,3 @@ else:
         st.write("間違えた単語:")
         for word, correct_option in st.session_state.incorrect_words:
             st.write(f"{word}: {correct_option}")
-ああ

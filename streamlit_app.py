@@ -54,6 +54,15 @@ if 'score' not in st.session_state:
 if 'incorrect_words' not in st.session_state:
     st.session_state.incorrect_words = []
 
+# Function to evaluate the answer and update the score
+def evaluate_answer(index, answer, correct_option):
+    if answer == correct_option:
+        st.session_state.score += 1
+    else:
+        st.session_state.incorrect_words.append((test_words_df.iloc[index]['単語'], correct_option))
+    st.session_state.current_index += 1
+    st.experimental_rerun()
+
 # Function to present the current word and options
 def present_question(index):
     word = test_words_df.iloc[index]['単語']
@@ -62,15 +71,7 @@ def present_question(index):
     if correct_option not in options:
         options[np.random.randint(0, 4)] = correct_option
     st.write(f"問題 {index + 1}: {word} の意味は？")
-    answer = st.radio("選択肢", options, key=f"question_{index}", on_change=submit_answer, args=(index, answer, correct_option))
-
-def submit_answer(index, answer, correct_option):
-    if answer == correct_option:
-        st.session_state.score += 1
-    else:
-        st.session_state.incorrect_words.append((test_words_df.iloc[index]['単語'], correct_option))
-    st.session_state.current_index += 1
-    st.experimental_rerun()
+    answer = st.radio("選択肢", options, key=f"question_{index}", on_change=evaluate_answer, args=(index, answer, correct_option))
 
 # Main test loop
 if st.session_state.current_index < len(test_words_df):

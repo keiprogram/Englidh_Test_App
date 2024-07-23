@@ -33,9 +33,6 @@ def load_data():
 
 words_df = load_data()
 
-# Display the first few rows of the dataframe to check column names
-st.write(words_df.head())
-
 # Select a random sample of 50 words for the test
 test_words_df = words_df.sample(n=50, random_state=1).reset_index(drop=True)
 

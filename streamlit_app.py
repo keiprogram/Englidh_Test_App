@@ -46,17 +46,11 @@ selected_range = st.sidebar.selectbox("出題範囲", ranges)
 range_start, range_end = map(int, selected_range.split('-'))
 filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')
 
-# 制限時間の設定
-st.sidebar.title("制限時間を60~600秒の範囲で指定してください")
-time_limit = st.sidebar.slider("制限時間 (秒)", min_value=60, max_value=600, value=60, step=10)
-
 # テスト開始ボタン
 if st.button('テストを開始する'):
     st.session_state.test_started = True
     st.session_state.correct_answers = 0
     st.session_state.current_question = 0
-    st.session_state.start_time = time.time()
-    st.session_state.time_limit = time_limit
     st.session_state.finished = False
     st.session_state.wrong_answers = []
 
@@ -110,20 +104,6 @@ def update_question():
     else:
         st.session_state.finished = True
 
-# 残り時間の表示と更新
-def update_timer():
-    if 'start_time' in st.session_state:
-        elapsed_time = time.time() - st.session_state.start_time
-        remaining_time = st.session_state.time_limit - elapsed_time
-        if remaining_time > 0 and not st.session_state.finished:
-            st.write(f"残り時間: {int(remaining_time)}秒")
-            st.progress(elapsed_time / st.session_state.time_limit)  # タイマーの進行状況バーを表示
-            time.sleep(1)
-            st.experimental_rerun()  # ページを再レンダリングしてタイマーを更新
-        elif remaining_time <= 0:
-            st.session_state.finished = True
-            display_results()
-
 # テスト終了後の結果表示
 def display_results():
     correct_answers = st.session_state.correct_answers
@@ -159,16 +139,8 @@ if 'test_started' in st.session_state and st.session_state.test_started:
         else:
             st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
         st.radio("選択してください", st.session_state.options, key='answer', on_change=update_question)
-        update_timer()  # タイマーを更新
     else:
         display_results()
 else:
-    if 'start_time' in st.session_state:
-        elapsed_time = time.time() - st.session_state.start_time
-        remaining_time = st.session_state.time_limit - elapsed_time
-        if remaining_time > 0 and not st.session_state.finished:
-            st.write(f"残り時間: {int(remaining_time)}秒")
-            st.progress(elapsed_time / st.session_state.time_limit)  # タイマーの進行状況バーを表示
-        elif remaining_time <= 0:
-            st.session_state.finished = True
-            display_results()
+    if 'test_started' in st.session_state and st.session_state.finished:
+        display_results()

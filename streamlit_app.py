@@ -33,8 +33,18 @@ def load_data():
 
 words_df = load_data()
 
+# Define the range options for the test
+total_words = len(words_df)
+range_options = [(i, min(i+99, total_words-1)) for i in range(0, total_words, 100)]
+
+# Select the range for the test
+selected_range = st.selectbox('出題範囲を選択してください:', range_options, format_func=lambda x: f"{x[0]+1}-{x[1]+1}")
+
+# Filter words based on the selected range
+filtered_words_df = words_df.iloc[selected_range[0]:selected_range[1]+1]
+
 # Select a random sample of 50 words for the test
-test_words_df = words_df.sample(n=50, random_state=1).reset_index(drop=True)
+test_words_df = filtered_words_df.sample(n=50, random_state=1).reset_index(drop=True)
 
 # Variables to track the test state
 if 'current_index' not in st.session_state:
@@ -52,23 +62,19 @@ def present_question(index):
     if correct_option not in options:
         options[np.random.randint(0, 4)] = correct_option
     st.write(f"問題 {index + 1}: {word} の意味は？")
-    answer = st.radio("選択肢", options)
-    return answer, correct_option
+    answer = st.radio("選択肢", options, key=f"question_{index}", on_change=submit_answer, args=(index, answer, correct_option))
 
-# Function to evaluate the answer and update the score
-def evaluate_answer(answer, correct_option):
+def submit_answer(index, answer, correct_option):
     if answer == correct_option:
         st.session_state.score += 1
     else:
-        st.session_state.incorrect_words.append((test_words_df.iloc[st.session_state.current_index]['単語'], correct_option))
+        st.session_state.incorrect_words.append((test_words_df.iloc[index]['単語'], correct_option))
+    st.session_state.current_index += 1
+    st.experimental_rerun()
 
 # Main test loop
 if st.session_state.current_index < len(test_words_df):
-    answer, correct_option = present_question(st.session_state.current_index)
-    if st.button('次へ'):
-        evaluate_answer(answer, correct_option)
-        st.session_state.current_index += 1
-        st.experimental_rerun()
+    present_question(st.session_state.current_index)
 else:
     st.write(f"テスト終了！ スコア: {st.session_state.score}/50")
     if st.session_state.incorrect_words:

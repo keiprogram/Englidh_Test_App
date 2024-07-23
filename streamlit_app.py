@@ -94,6 +94,7 @@ def update_question():
             question_word,
             correct_answer
         ))
+
     st.session_state.current_question += 1
     if st.session_state.current_question < st.session_state.total_questions:
         st.session_state.current_question_data = st.session_state.selected_questions.iloc[st.session_state.current_question]
@@ -167,7 +168,7 @@ else:
         remaining_time = st.session_state.time_limit - elapsed_time
         if remaining_time > 0 and not st.session_state.finished:
             st.write(f"残り時間: {int(remaining_time)}秒")
-            st.progress(elapsed_time / st.session_state.time_limit)  # タイマーの進行状況バーを表
+            st.progress(elapsed_time / st.session_state.time_limit)  # タイマーの進行状況バーを表示
         elif remaining_time <= 0:
             st.session_state.finished = True
             display_results()

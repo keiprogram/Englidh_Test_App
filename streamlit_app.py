@@ -5,31 +5,6 @@ import numpy as np
 # ページ設定をスクリプトの最初に配置
 st.set_page_config(
     page_title="English Vocabulary Test",
-    page_icon="spellcheck"  # ページアイコンをGoogle Fontのspellcheckアイコンに設定
-)
-
-# Google FontsアイコンのCSSを追加
-st.markdown(
-    """
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <style>
-    .icon::before {
-        font-family: 'Material Icons';
-        content: 'spellcheck';
-    }
-    .main {
-        background: linear-gradient(180deg, #f4efd1 80%, #df3b1f 20%);
-        height: 100vh;
-    }
-    .stButton > button {
-        width: 100%;
-        margin: 5px 0;
-        padding: 10px;
-        font-size: 1.2em;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
 )
 
 # タイトルと説明
@@ -155,7 +130,7 @@ if 'test_started' in st.session_state and st.session_state.test_started:
 
         # 選択肢をボタン形式で表示
         for option in st.session_state.options:
-            if st.button(option, key=option):
+            if st.button(option, key=f"{st.session_state.current_question}-{option}"):
                 update_question(option)
                 st.experimental_rerun()  # 回答後にリロードして次の質問を表示
     else:

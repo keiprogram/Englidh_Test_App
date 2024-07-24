@@ -5,7 +5,7 @@ import numpy as np
 import time
 
 st.set_page_config(
-    page_title="English Vocabraly Test！"
+    page_title="English Vocabraly Test"
     icon=":material/spellcheck:"
 )
 # CSS for custom background

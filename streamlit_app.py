@@ -6,6 +6,7 @@ import time
 
 st.set_page_config(
     page_title="English Vocabraly Test！"
+    icon=":material/spellcheck:"
 )
 # CSS for custom background
 st.markdown(

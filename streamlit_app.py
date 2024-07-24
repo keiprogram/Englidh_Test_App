@@ -1,8 +1,17 @@
-import os
 import streamlit as st
 import pandas as pd
 import numpy as np
 import time
+import shutil
+
+# アップロードされた画像を保存するパスを設定
+favicon_path = "favicon.png"
+shutil.copy("/mnt/data/English Logo.png", favicon_path)
+
+st.set_page_config(
+    page_title="英単語テスト",
+    page_icon=favicon_path  # ファビコンを設定
+)
 
 # CSS for custom background
 st.markdown(

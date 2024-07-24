@@ -1,15 +1,16 @@
-import os
 import streamlit as st
 import pandas as pd
 import numpy as np
-import time
 
-
-
-# CSS for custom background
+# Google FontsアイコンのCSSを追加
 st.markdown(
     """
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
+    .icon::before {
+        font-family: 'Material Icons';
+        content: 'spellcheck';
+    }
     .main {
         background: linear-gradient(180deg, #f4efd1 80%, #df3b1f 20%);
         height: 100vh;
@@ -17,6 +18,11 @@ st.markdown(
     </style>
     """,
     unsafe_allow_html=True
+)
+
+st.set_page_config(
+    page_title="English Vocabulary Test",
+    page_icon="spellcheck"  # ページアイコンをGoogle Fontのspellcheckアイコンに設定
 )
 
 # タイトルと説明

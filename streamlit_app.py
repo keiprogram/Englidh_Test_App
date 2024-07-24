@@ -2,6 +2,12 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
+# ページ設定をスクリプトの最初に配置
+st.set_page_config(
+    page_title="English Vocabulary Test",
+    page_icon="spellcheck"  # ページアイコンをGoogle Fontのspellcheckアイコンに設定
+)
+
 # Google FontsアイコンのCSSを追加
 st.markdown(
     """
@@ -18,11 +24,6 @@ st.markdown(
     </style>
     """,
     unsafe_allow_html=True
-)
-
-st.set_page_config(
-    page_title="English Vocabulary Test",
-    page_icon="spellcheck"  # ページアイコンをGoogle Fontのspellcheckアイコンに設定
 )
 
 # タイトルと説明

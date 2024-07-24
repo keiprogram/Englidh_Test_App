@@ -21,6 +21,12 @@ st.markdown(
         background: linear-gradient(180deg, #f4efd1 80%, #df3b1f 20%);
         height: 100vh;
     }
+    .stButton > button {
+        width: 100%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 1.2em;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -80,7 +86,7 @@ if st.button('テストを開始する'):
     st.session_state.answer = None
 
 # 問題更新用の関数
-def update_question():
+def update_question(answer):
     if test_type == '英語→日本語':
         correct_answer = st.session_state.current_question_data['語の意味']
         question_word = st.session_state.current_question_data['単語']
@@ -88,7 +94,7 @@ def update_question():
         correct_answer = st.session_state.current_question_data['単語']
         question_word = st.session_state.current_question_data['語の意味']
 
-    if st.session_state.answer == correct_answer:
+    if answer == correct_answer:
         st.session_state.correct_answers += 1
     else:
         st.session_state.wrong_answers.append((
@@ -146,7 +152,11 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
         else:
             st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
-        st.radio("選択してください", st.session_state.options, key='answer', on_change=update_question)
+
+        # 選択肢をボタン形式で表示
+        for option in st.session_state.options:
+            if st.button(option):
+                update_question(option)
     else:
         display_results()
 else:

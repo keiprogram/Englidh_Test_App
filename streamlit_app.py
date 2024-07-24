@@ -3,17 +3,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import time
-from PIL import Image
-
-# ファイルパスを設定
-file_path = "/mnt/English Logo.png"
-
-# ファイルが存在するか確認
-if not os.path.exists(file_path):
-    st.error(f"File not found: {file_path}")
-else:
-    logo = Image.open(file_path)
-    st.set_page_config(page_title="英単語テスト", page_icon=logo)
 
 # CSS for custom background
 st.markdown(

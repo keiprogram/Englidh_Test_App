@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import os
+import uuid
 
 # ページ設定をスクリプトの最初に配置
 st.set_page_config(
@@ -139,7 +140,8 @@ if 'test_started' in st.session_state and st.session_state.test_started:
 
         # 選択肢をボタン形式で表示
         for option in st.session_state.options:
-            if st.button(option, key=f"{st.session_state.current_question}-{option}"):
+            unique_key = f"{st.session_state.current_question}-{option}-{uuid.uuid4()}"
+            if st.button(option, key=unique_key):
                 update_question(option)
                 st.experimental_rerun()  # 回答後にリロードして次の質問を表示
     else:

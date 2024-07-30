@@ -1,12 +1,35 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import os
-import uuid
 
 # ページ設定をスクリプトの最初に配置
 st.set_page_config(
     page_title="English Vocabulary Test",
+    page_icon="spellcheck"  # ページアイコンをGoogle Fontのspellcheckアイコンに設定
+)
+
+# Google FontsアイコンのCSSを追加
+st.markdown(
+    """
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+    .icon::before {
+        font-family: 'Material Icons';
+        content: 'spellcheck';
+    }
+    .main {
+        background: linear-gradient(180deg, #f4efd1 80%, #df3b1f 20%);
+        height: 100vh;
+    }
+    .stButton > button {
+        width: 100%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 1.2em;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
 # タイトルと説明
@@ -120,15 +143,7 @@ def display_results():
         # 番号の小さい順にソート
         wrong_answers.sort(key=lambda x: x[0])
         for no, word, meaning in wrong_answers:
-            col1, col2 = st.columns([3, 1])
-            with col1:
-                st.write(f"番号: {no}, 単語: {word}, 語の意味: {meaning}")
-            with col2:
-                audio_file_path = f"audio/W_{str(no).zfill(4)}.mp3"
-                if os.path.exists(audio_file_path):
-                    audio_file = open(audio_file_path, 'rb')
-                    audio_bytes = audio_file.read()
-                    st.audio(audio_bytes, format='audio/mp3', start_time=0)
+            st.write(f"番号: {no}, 単語: {word}, 語の意味: {meaning}")
 
 # テストが開始された場合の処理
 if 'test_started' in st.session_state and st.session_state.test_started:
@@ -140,10 +155,8 @@ if 'test_started' in st.session_state and st.session_state.test_started:
 
         # 選択肢をボタン形式で表示
         for option in st.session_state.options:
-            unique_key = f"{st.session_state.current_question}-{option}-{uuid.uuid4()}"
-            if st.button(option, key=unique_key):
+            if st.button(option):
                 update_question(option)
-                st.experimental_rerun()  # 回答後にリロードして次の質問を表示
     else:
         display_results()
 else:

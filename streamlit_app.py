@@ -62,10 +62,10 @@ if not st.session_state.started:
     
     if st.button('Start'):
         st.session_state.started = True
-        st.experimental_rerun()
+        st.experimental_rerun()  # ページを再読み込みしてメインコンテンツを表示
 
-# メインコンテンツの表示
-if st.session_state.started:
+else:
+    # メインコンテンツの表示
     # ロゴ画像の表示
     image = Image.open('img/English.png')
     st.image(image, use_column_width=True)

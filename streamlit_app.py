@@ -49,11 +49,9 @@ st.markdown(
         margin-left: auto;
         margin-right: auto;
     }
-    .stRadio > div {
+    .stRadio {
         text-align: center;
-    }
-    h1, h2, h3, h4, h5, h6, .stMarkdown, .stText, .stSubheader {
-        text-align: center;
+        margin: 0 auto;
     }
     .stRadio > div {
         display: inline-block;
@@ -61,6 +59,9 @@ st.markdown(
     }
     .stRadio label {
         display: block;
+        text-align: center;
+    }
+    h1, h2, h3, h4, h5, h6, .stMarkdown, .stText, .stSubheader {
         text-align: center;
     }
     </style>

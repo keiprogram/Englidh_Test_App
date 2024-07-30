@@ -8,7 +8,19 @@ st.set_page_config(
     page_title="English Vocabulary Test",
 )
 
-#ロゴ画像の表示
+# カスタムCSSの適用
+st.markdown("""
+    <style>
+    .main {
+        background-color: #022033;
+    }
+    .css-1d391kg {  /* Streamlit's default font color class */
+        color: #ffae4b;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# ロゴ画像の表示
 image = Image.open('img/English.png')
 st.image(image)
 

@@ -14,25 +14,16 @@ st.markdown("""
     .main {
         background-color: #022033;
     }
-    .css-1d391kg {  /* Streamlit's default font color class */
+    .css-1d391kg {  /* Streamlitのデフォルトのフォントカラーのクラス */
         color: #ffae4b;
     }
-    .css-18e3th9 {  /* Streamlit's sidebar title class */
+    .css-1v0mbdj { /* もう一つのテキストカラーのクラス */
         color: #ffae4b;
     }
-    .css-1y0t7t4 {  /* Streamlit's sidebar text class */
+    .css-1g3p6zh { /* ラジオボタンのテキストカラーのクラス */
         color: #ffae4b;
     }
-    .css-1l02l3i {  /* Streamlit's header class */
-        color: #ffae4b;
-    }
-    .css-1ks7f2b {  /* Streamlit's radio button text class */
-        color: #ffae4b;
-    }
-    .css-1avcmty {  /* Streamlit's metrics class */
-        color: #ffae4b;
-    }
-    .css-1o4t4ab {  /* Streamlit's progress bar class */
+    .css-1eqcz6h { /* サイドバーのテキストカラーのクラス */
         color: #ffae4b;
     }
     </style>
@@ -43,7 +34,7 @@ image = Image.open('img/English.png')
 st.image(image)
 
 # タイトルと説明
-st.title(':white[英単語テスト]')
+st.title('英単語テスト')
 st.write('英単語を順に表示して、勉強をサポートします！')
 
 # Load the data from multiple Excel files

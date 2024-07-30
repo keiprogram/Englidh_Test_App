@@ -51,8 +51,8 @@ st.markdown(
 if 'started' not in st.session_state:
     st.session_state.started = False
 
+# スタート画面の表示
 if not st.session_state.started:
-    # スタート画面の表示
     st.title('英単語テスト')
     st.write('準備ができたら、下の「Start」ボタンを押してください。')
     
@@ -64,8 +64,8 @@ if not st.session_state.started:
         st.session_state.started = True
         st.experimental_rerun()  # ページを再読み込みしてメインコンテンツを表示
 
-else:
-    # メインコンテンツの表示
+# メインコンテンツの表示
+if st.session_state.started:
     # ロゴ画像の表示
     image = Image.open('img/English.png')
     st.image(image, use_column_width=True)
@@ -193,6 +193,6 @@ else:
             st.radio("選択してください", st.session_state.options, key='answer', on_change=update_question)
         else:
             display_results()
-    else:
-        if 'test_started' in st.session_state and st.session_state.finished:
-            display_results()
+    elif 'test_started' in st.session_state and st.session_state.finished:
+        display_results()
+ｓ

@@ -17,6 +17,24 @@ st.markdown("""
     .css-1d391kg {  /* Streamlit's default font color class */
         color: #ffae4b;
     }
+    .css-18e3th9 {  /* Streamlit's sidebar title class */
+        color: #ffae4b;
+    }
+    .css-1y0t7t4 {  /* Streamlit's sidebar text class */
+        color: #ffae4b;
+    }
+    .css-1l02l3i {  /* Streamlit's header class */
+        color: #ffae4b;
+    }
+    .css-1ks7f2b {  /* Streamlit's radio button text class */
+        color: #ffae4b;
+    }
+    .css-1avcmty {  /* Streamlit's metrics class */
+        color: #ffae4b;
+    }
+    .css-1o4t4ab {  /* Streamlit's progress bar class */
+        color: #ffae4b;
+    }
     </style>
 """, unsafe_allow_html=True)
 

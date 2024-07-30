@@ -15,6 +15,7 @@ st.markdown(
     .reportview-container {
         background-color: #022033;
         color: #ffae4b;
+        text-align: center;
     }
     .sidebar .sidebar-content {
         background-color: #022033;
@@ -23,6 +24,7 @@ st.markdown(
     .st-bd {
         background-color: #022033;
         color: #ffae4b;
+        text-align: center;
     }
     .st-cd {
         background-color: #022033;
@@ -34,6 +36,12 @@ st.markdown(
     .st-cd {
         background-color: #022033;
     }
+    .css-1v3fvcr {
+        text-align: center;
+    }
+    .css-1wa3w3g {
+        text-align: center;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -41,7 +49,7 @@ st.markdown(
 
 # ロゴ画像の表示
 image = Image.open('img/English.png')
-st.image(image)
+st.image(image, use_column_width=True)
 
 # タイトルと説明
 st.title('英単語テスト')

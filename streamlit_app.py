@@ -6,6 +6,7 @@ import numpy as np
 st.set_page_config(
     page_title="English Vocabulary Test",
 )
+
 # タイトルと説明
 st.title('英単語テスト')
 st.write('英単語を順に表示して、勉強をサポートします！')

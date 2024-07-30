@@ -150,9 +150,13 @@ if 'test_started' in st.session_state and st.session_state.test_started:
 
         # ボタンとして選択肢を表示
         options = st.session_state.options
+        selected_option = None
         for option in options:
-            if st.button(option):
-                update_question(option)
+            if st.button(option, key=option):
+                selected_option = option
+                break
+        if selected_option:
+            update_question(selected_option)
     else:
         display_results()
 else:

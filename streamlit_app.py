@@ -157,7 +157,8 @@ if 'test_started' in st.session_state and st.session_state.test_started:
         for option in st.session_state.options:
             if st.button(option, key=option):
                 update_question(option)
-                st.experimental_rerun()  # 回答後にリロードして次の質問を表示
+                # 回答後にリロードして次の質問を表示
+                st.experimental_set_query_params(dummy=str(np.random.randint(1000000)))
     else:
         display_results()
 else:

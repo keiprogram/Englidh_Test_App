@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+from PIL import Image
 
 # ページ設定をスクリプトの最初に配置
 st.set_page_config(
@@ -8,7 +9,8 @@ st.set_page_config(
 )
 
 #ロゴ画像の表示
-st.image("English.jpg")
+image = Image.open('English.jpg')
+st.image(image)
 
 # タイトルと説明
 st.title('英単語テスト')

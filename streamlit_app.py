@@ -1,44 +1,25 @@
 import streamlit as st
+import pandas as pd
+import numpy as np
 from PIL import Image
 
 # ページ設定をスクリプトの最初に配置
 st.set_page_config(
     page_title="English Vocabulary Test",
+    page_icon=":book:"
 )
 
-# カスタムCSSを適用
+# スタイルを設定
 st.markdown(
     """
     <style>
     .reportview-container {
         background-color: #022033;
         color: #ffae4b;
-        text-align: center;
     }
     .sidebar .sidebar-content {
         background-color: #022033;
         color: #ffae4b;
-    }
-    .st-bd {
-        background-color: #022033;
-        color: #ffae4b;
-        text-align: center;
-    }
-    .st-cd {
-        background-color: #022033;
-        color: #ffae4b;
-    }
-    .st-ec {
-        color: #ffae4b;
-    }
-    .st-cd {
-        background-color: #022033;
-    }
-    .css-1v3fvcr {
-        text-align: center;
-    }
-    .css-1wa3w3g {
-        text-align: center;
     }
     .start-button {
         background-color: #ffae4b;
@@ -48,6 +29,7 @@ st.markdown(
         border-radius: 10px;
         border: none;
         cursor: pointer;
+        display: inline-block;
     }
     .start-button:hover {
         background-color: #e89c6e;
@@ -70,21 +52,15 @@ if st.session_state.start_screen:
     st.image(image, use_column_width=True)
 
     # スタートボタンの表示
-    st.markdown(
-        """
-        <button class="start-button" onclick="window.location.href='/main'">Start</button>
-        """,
+    if st.markdown(
+        '<button class="start-button" onclick="window.location.href=\'/?start=true\'">Start</button>',
         unsafe_allow_html=True
-    )
+    ):
+        st.session_state.start_screen = False
 
     st.markdown('</div>', unsafe_allow_html=True)
 else:
     # メインコンテンツを表示
-    # ロゴ画像の表示
-    image = Image.open('img/English.png')
-    st.image(image, use_column_width=True)
-
-    # タイトルと説明
     st.title('英単語テスト')
     st.write('英単語を順に表示して、勉強をサポートします！')
 
@@ -205,4 +181,5 @@ else:
             else:
                 st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
             st.radio("選択してください", st.session_state.options, key='answer', on_change=update_question)
-       
+        else:
+            display_results()

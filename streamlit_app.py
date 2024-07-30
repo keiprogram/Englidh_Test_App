@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from PIL import Image
+import base64
 
 # ページ設定をスクリプトの最初に配置
 st.set_page_config(
@@ -36,13 +37,7 @@ st.markdown(
     .st-cd {
         background-color: #022033;
     }
-    .css-1v3fvcr {
-        text-align: center;
-    }
-    .css-1wa3w3g {
-        text-align: center;
-    }
-    .stImage img {
+    img {
         border-radius: 20px; /* 画像の角を丸くする */
     }
     </style>
@@ -51,8 +46,14 @@ st.markdown(
 )
 
 # ロゴ画像の表示
-image = Image.open('img/English.png')
-st.image(image, use_column_width=True, class_="stImage")
+def load_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+image_path = 'img/English.png'
+image_base64 = load_image(image_path)
+image_html = f'<img src="data:image/png;base64,{image_base64}" style="border-radius: 20px;">'
+st.markdown(image_html, unsafe_allow_html=True)
 
 # タイトルと説明
 st.title('英単語テスト')

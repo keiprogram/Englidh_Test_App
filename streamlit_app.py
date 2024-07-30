@@ -20,18 +20,21 @@ st.markdown(
         background-color: #022033;
         color: #ffae4b;
     }
-    .st-bd {
-        background-color: #022033;
+    .stButton>button {
+        background-color: #ffae4b;
+        color: #022033;
+        border: 1px solid #ffae4b;
+    }
+    .stRadio>label>div, .stSelectbox>label>div {
         color: #ffae4b;
     }
-    .st-cd {
-        background-color: #022033;
+    .stMetric>div>div {
         color: #ffae4b;
     }
-    .st-ec {
-        color: #ffae4b;
+    .stProgress>div>div>div>div {
+        background-color: #ffae4b;
     }
-    .st-cd {
+    .stProgress>div>div>div {
         background-color: #022033;
     }
     </style>

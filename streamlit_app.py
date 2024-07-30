@@ -42,6 +42,9 @@ st.markdown(
     .css-1wa3w3g {
         text-align: center;
     }
+    .stImage img {
+        border-radius: 20px; /* 画像の角を丸くする */
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -49,7 +52,7 @@ st.markdown(
 
 # ロゴ画像の表示
 image = Image.open('img/English.png')
-st.image(image, use_column_width=True)
+st.image(image, use_column_width=True, class_="stImage")
 
 # タイトルと説明
 st.title('英単語テスト')

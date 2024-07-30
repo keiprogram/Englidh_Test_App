@@ -9,7 +9,7 @@ st.set_page_config(
 )
 
 #ロゴ画像の表示
-image = Image.open('English.jpg')
+image = Image.open('English.png')
 st.image(image)
 
 # タイトルと説明

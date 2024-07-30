@@ -52,6 +52,17 @@ st.markdown(
     .stRadio > div {
         text-align: center;
     }
+    h1, h2, h3, h4, h5, h6, .stMarkdown, .stText, .stSubheader {
+        text-align: center;
+    }
+    .stRadio > div {
+        display: inline-block;
+        margin: 0 auto;
+    }
+    .stRadio label {
+        display: block;
+        text-align: center;
+    }
     </style>
     """,
     unsafe_allow_html=True

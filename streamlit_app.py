@@ -80,7 +80,8 @@ if st.button('テストを開始する'):
     st.session_state.answer = None
 
 # 問題更新用の関数
-def update_question():
+def update_question(selected_option):
+    st.session_state.answer = selected_option
     if test_type == '英語→日本語':
         correct_answer = st.session_state.current_question_data['語の意味']
         question_word = st.session_state.current_question_data['単語']
@@ -146,7 +147,12 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
         else:
             st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
-        st.radio("選択してください", st.session_state.options, key='answer', on_change=update_question)
+
+        # ボタンとして選択肢を表示
+        options = st.session_state.options
+        for option in options:
+            if st.button(option):
+                update_question(option)
     else:
         display_results()
 else:

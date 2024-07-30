@@ -1,6 +1,4 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
 from PIL import Image
 
 # ページ設定をスクリプトの最初に配置
@@ -46,8 +44,10 @@ st.markdown(
         background-color: #ffae4b;
         color: #022033;
         font-size: 24px;
-        padding: 20px;
+        padding: 20px 40px;
         border-radius: 10px;
+        border: none;
+        cursor: pointer;
     }
     .start-button:hover {
         background-color: #e89c6e;
@@ -70,10 +70,13 @@ if st.session_state.start_screen:
     st.image(image, use_column_width=True)
 
     # スタートボタンの表示
-    if st.button('Start', key='start', help='Click to start the test', use_container_width=True, 
-                 css_class='start-button'):
-        st.session_state.start_screen = False
-    
+    st.markdown(
+        """
+        <button class="start-button" onclick="window.location.href='/main'">Start</button>
+        """,
+        unsafe_allow_html=True
+    )
+
     st.markdown('</div>', unsafe_allow_html=True)
 else:
     # メインコンテンツを表示
@@ -202,8 +205,4 @@ else:
             else:
                 st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
             st.radio("選択してください", st.session_state.options, key='answer', on_change=update_question)
-        else:
-            display_results()
-    else:
-        if 'test_started' in st.session_state and st.session_state.finished:
-            display_results()
+       

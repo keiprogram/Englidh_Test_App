@@ -2,13 +2,14 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from PIL import Image
+import time
 
 # ページ設定をスクリプトの最初に配置
 st.set_page_config(
     page_title="English Vocabulary Test",
 )
 
-#ロゴ画像の表示
+# ロゴ画像の表示
 image = Image.open('img/English.png')
 st.image(image)
 
@@ -16,14 +17,18 @@ st.image(image)
 st.title('英単語テスト')
 st.write('英単語を順に表示して、勉強をサポートします！')
 
-# Load the data from multiple Excel files
+# データの読み込み
 @st.cache_data
 def load_data():
-    part1 = pd.read_excel("リープベーシック見出語・用例リスト(Part 1).xlsx")
-    part2 = pd.read_excel("リープベーシック見出語・用例リスト(Part 2).xlsx")
-    part3 = pd.read_excel("リープベーシック見出語・用例リスト(Part 3).xlsx")
-    part4 = pd.read_excel("リープベーシック見出語・用例リスト(Part 4).xlsx")
-    return pd.concat([part1, part2, part3, part4], ignore_index=True)
+    try:
+        part1 = pd.read_excel("リープベーシック見出語・用例リスト(Part 1).xlsx")
+        part2 = pd.read_excel("リープベーシック見出語・用例リスト(Part 2).xlsx")
+        part3 = pd.read_excel("リープベーシック見出語・用例リスト(Part 3).xlsx")
+        part4 = pd.read_excel("リープベーシック見出語・用例リスト(Part 4).xlsx")
+        return pd.concat([part1, part2, part3, part4], ignore_index=True)
+    except Exception as e:
+        st.error(f"データの読み込みに失敗しました: {e}")
+        st.stop()
 
 words_df = load_data()
 
@@ -47,6 +52,8 @@ if st.button('テストを開始する'):
     st.session_state.current_question = 0
     st.session_state.finished = False
     st.session_state.wrong_answers = []
+    st.session_state.start_time = time.time()
+    st.session_state.time_limit = 60  # 60秒の制限時間
 
     # ランダムに50問を選択
     selected_questions = filtered_words_df.sample(50).reset_index(drop=True)
@@ -64,6 +71,12 @@ if st.button('テストを開始する'):
     np.random.shuffle(options)
     st.session_state.options = options
     st.session_state.answer = None
+
+# タイマー機能
+def time_remaining():
+    elapsed_time = time.time() - st.session_state.start_time
+    remaining_time = max(0, st.session_state.time_limit - int(elapsed_time))
+    return remaining_time
 
 # 問題更新用の関数
 def update_question():
@@ -84,7 +97,7 @@ def update_question():
         ))
 
     st.session_state.current_question += 1
-    if st.session_state.current_question < st.session_state.total_questions:
+    if st.session_state.current_question < st.session_state.total_questions and time_remaining() > 0:
         st.session_state.current_question_data = st.session_state.selected_questions.iloc[st.session_state.current_question]
         if test_type == '英語→日本語':
             options = list(st.session_state.selected_questions['語の意味'].sample(3))
@@ -127,7 +140,8 @@ def display_results():
 
 # テストが開始された場合の処理
 if 'test_started' in st.session_state and st.session_state.test_started:
-    if st.session_state.current_question < st.session_state.total_questions:
+    if st.session_state.current_question < st.session_state.total_questions and time_remaining() > 0:
+        st.subheader(f"残り時間: {time_remaining()}秒")
         if test_type == '英語→日本語':
             st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
         else:

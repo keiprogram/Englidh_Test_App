@@ -30,6 +30,7 @@ st.markdown(
     .st-cd {
         background-color: #022033;
         color: #ffae4b;
+        text-align: center;
     }
     .st-ec {
         color: #ffae4b;
@@ -39,6 +40,17 @@ st.markdown(
     }
     img {
         border-radius: 20px; /* 画像の角を丸くする */
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .stButton > button {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .stRadio > div {
+        text-align: center;
     }
     </style>
     """,

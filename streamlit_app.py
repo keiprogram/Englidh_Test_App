@@ -20,24 +20,20 @@ st.markdown(
         background-color: #022033;
         color: #ffae4b;
     }
-    .stButton>button {
-        background-color: #ffae4b;
-        color: #022033;
-        border: 1px solid #ffae4b;
-    }
-    .stRadio>label>div, .stSelectbox>label>div {
+    .st-bd {
+        background-color: #022033;
         color: #ffae4b;
     }
-    .stMetric>div>div {
+    .st-cd {
+        background-color: #022033;
         color: #ffae4b;
     }
-    .stProgress>div>div>div>div {
-        background-color: #ffae4b;
+    .st-ec {
+        color: #ffae4b;
     }
-    .stProgress>div>div>div {
+    .st-cd {
         background-color: #022033;
     }
-    background-color:#022033;
     </style>
     """,
     unsafe_allow_html=True

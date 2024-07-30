@@ -43,7 +43,7 @@ image = Image.open('img/English.png')
 st.image(image)
 
 # タイトルと説明
-st.title('英単語テスト')
+st.title(':orange[英単語テスト]')
 st.write('英単語を順に表示して、勉強をサポートします！')
 
 # Load the data from multiple Excel files

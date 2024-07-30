@@ -37,6 +37,7 @@ st.markdown(
     .stProgress>div>div>div {
         background-color: #022033;
     }
+    background-color:#022033;
     </style>
     """,
     unsafe_allow_html=True

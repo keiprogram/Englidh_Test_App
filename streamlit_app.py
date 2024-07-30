@@ -7,6 +7,9 @@ st.set_page_config(
     page_title="English Vocabulary Test",
 )
 
+#ロゴ画像の表示
+st.image("img/English.jpg")
+
 # タイトルと説明
 st.title('英単語テスト')
 st.write('英単語を順に表示して、勉強をサポートします！')

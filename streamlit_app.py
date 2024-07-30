@@ -8,26 +8,36 @@ st.set_page_config(
     page_title="English Vocabulary Test",
 )
 
-# カスタムCSSの適用
-st.markdown("""
+# カスタムCSSを適用
+st.markdown(
+    """
     <style>
-    .main {
+    .reportview-container {
+        background-color: #022033;
+        color: #ffae4b;
+    }
+    .sidebar .sidebar-content {
+        background-color: #022033;
+        color: #ffae4b;
+    }
+    .st-bd {
+        background-color: #022033;
+        color: #ffae4b;
+    }
+    .st-cd {
+        background-color: #022033;
+        color: #ffae4b;
+    }
+    .st-ec {
+        color: #ffae4b;
+    }
+    .st-cd {
         background-color: #022033;
     }
-    .css-1d391kg {  /* Streamlitのデフォルトのフォントカラーのクラス */
-        color: #ffae4b;
-    }
-    .css-1v0mbdj { /* もう一つのテキストカラーのクラス */
-        color: #ffae4b;
-    }
-    .css-1g3p6zh { /* ラジオボタンのテキストカラーのクラス */
-        color: #ffae4b;
-    }
-    .css-1eqcz6h { /* サイドバーのテキストカラーのクラス */
-        color: #ffae4b;
-    }
     </style>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True
+)
 
 # ロゴ画像の表示
 image = Image.open('img/English.png')

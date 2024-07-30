@@ -5,7 +5,9 @@ import numpy as np
 # ページ設定をスクリプトの最初に配置
 st.set_page_config(
     page_title="English Vocabulary Test",
+    page_icon="spellcheck"
 )
+
 # タイトルと説明
 st.title('英単語テスト')
 st.write('英単語を順に表示して、勉強をサポートします！')
@@ -126,7 +128,11 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
         else:
             st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
-        st.radio("選択してください", st.session_state.options, key='answer', on_change=update_question)
+        for option in st.session_state.options:
+            if st.button(option):
+                st.session_state.answer = option
+                update_question()
+                break
     else:
         display_results()
 else:

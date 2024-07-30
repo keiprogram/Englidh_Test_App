@@ -1,14 +1,19 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import os
 
 # ページ設定をスクリプトの最初に配置
 st.set_page_config(
     page_title="English Vocabulary Test",
 )
 
-#ロゴ画像の表示
-st.image("img/English.jpg")
+# 画像ファイルのパスを確認
+image_path = "img/English.jpg"
+if os.path.exists(image_path):
+    st.image(image_path)
+else:
+    st.warning(f"画像ファイルが見つかりません: {image_path}")
 
 # タイトルと説明
 st.title('英単語テスト')

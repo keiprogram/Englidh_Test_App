@@ -42,6 +42,16 @@ st.markdown(
     .css-1wa3w3g {
         text-align: center;
     }
+    .start-button {
+        background-color: #ffae4b;
+        color: #022033;
+        font-size: 24px;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    .start-button:hover {
+        background-color: #e89c6e;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -53,13 +63,18 @@ if 'start_screen' not in st.session_state:
 
 # スタート画面が表示されている場合
 if st.session_state.start_screen:
+    st.markdown('<div style="height: 100vh; display: flex; justify-content: center; align-items: center;">', unsafe_allow_html=True)
+    
     # ロゴ画像の表示
     image = Image.open('img/English.png')
     st.image(image, use_column_width=True)
 
     # スタートボタンの表示
-    if st.button('Start'):
+    if st.button('Start', key='start', help='Click to start the test', use_container_width=True, 
+                 css_class='start-button'):
         st.session_state.start_screen = False
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 else:
     # メインコンテンツを表示
     # ロゴ画像の表示

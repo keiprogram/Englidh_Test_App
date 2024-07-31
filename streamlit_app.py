@@ -220,22 +220,17 @@ def display_results():
         df_wrong_answers = df_wrong_answers.sort_values(by="問題番号")  # 問題番号でソート
         st.write(df_wrong_answers.to_html(index=False, classes='results-table'), unsafe_allow_html=True)
     else:
-        st.write("すべて正解です！")
+        st.write("間違えた問題はありません。")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# テストが開始された場合の処理
-if 'test_started' in st.session_state and st.session_state.test_started:
-    if st.session_state.current_question < st.session_state.total_questions:
-        if test_type == '英語→日本語':
-            st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
-        else:
-            st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
-        st.markdown('<div class="choices-container">', unsafe_allow_html=True)
-        for option in st.session_state.options:
-            st.button(option, key=f"button_{st.session_state.current_question}_{option}", on_click=update_question, args=(option,))
-        st.markdown('</div>', unsafe_allow_html=True)
-    else:
-        display_results()
+# メインのコンテンツ
+if 'test_started' in st.session_state and not st.session_state.finished:
+    st.subheader(f"問題 {st.session_state.current_question + 1} / {st.session_state.total_questions}")
+    st.subheader(f"{st.session_state.current_question_data['単語']}" if test_type == '英語→日本語' else f"{st.session_state.current_question_data['語の意味']}")
+    st.markdown('<div class="choices-container">', unsafe_allow_html=True)
+    for option in st.session_state.options:
+        st.button(option, key=f"button_{st.session_state.current_question}_{option}", on_click=update_question, args=(option,))
+    st.markdown('</div>', unsafe_allow_html=True)
 else:
     if 'test_started' in st.session_state and st.session_state.finished:
         display_results()

@@ -54,7 +54,7 @@ st.markdown(
         align-items: center;
         flex-wrap: wrap;
     }
-    .choice {
+    .choice-button {
         background-color: #ffae4b;
         color: #022033;
         border-radius: 10px;
@@ -63,7 +63,7 @@ st.markdown(
         cursor: pointer;
         transition: background-color 0.3s;
     }
-    .choice:hover {
+    .choice-button:hover {
         background-color: #ffd17f;
     }
     h1, h2, h3, h4, h5, h6, .stMarkdown, .stText, .stSubheader {
@@ -138,7 +138,7 @@ if st.button('テストを開始する'):
     st.session_state.answer = None
 
 # 問題更新用の関数
-def update_question():
+def update_question(answer):
     if test_type == '英語→日本語':
         correct_answer = st.session_state.current_question_data['語の意味']
         question_word = st.session_state.current_question_data['単語']
@@ -146,7 +146,7 @@ def update_question():
         correct_answer = st.session_state.current_question_data['単語']
         question_word = st.session_state.current_question_data['語の意味']
 
-    if st.session_state.answer == correct_answer:
+    if answer == correct_answer:
         st.session_state.correct_answers += 1
     else:
         st.session_state.wrong_answers.append((
@@ -207,25 +207,9 @@ if 'test_started' in st.session_state and st.session_state.test_started:
         
         st.markdown('<div class="choices-container">', unsafe_allow_html=True)
         for option in st.session_state.options:
-            st.markdown(f'<div class="choice" onclick="window.updateAnswer(\'{option}\')">{option}</div>', unsafe_allow_html=True)
+            if st.button(option, key=option, on_click=update_question, args=(option,)):
+                pass
         st.markdown('</div>', unsafe_allow_html=True)
-
-        # JavaScriptを使って選択肢をクリックしたときの処理を追加
-        st.markdown(
-            """
-            <script>
-            function updateAnswer(answer) {
-                const input = document.querySelector('input[data-baseweb="radio"]');
-                if (input) {
-                    input.value = answer;
-                    const event = new Event('change', { bubbles: true });
-                    input.dispatchEvent(event);
-                }
-            }
-            </script>
-            """,
-            unsafe_allow_html=True
-        )
     else:
         display_results()
 else:

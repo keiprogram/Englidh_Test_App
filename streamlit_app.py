@@ -47,6 +47,7 @@ st.markdown(
     .stButton > button {
         display: inline-block;
         margin: 0 10px;
+        text-align:center;
     }
     .choices-container {
         display: flex;

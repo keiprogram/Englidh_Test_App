@@ -77,9 +77,9 @@ def load_image(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode()
 
-image_path = 'img/English_Logo.png'
+image_path = 'img/English.png'
 image_base64 = load_image(image_path)
-image_html = f'<img src="data:image/png;base64,{image_base64}" style="border-radius: 20px; width: 600px;">'
+image_html = f'<img src="data:image/png;base64,{image_base64}" style="border-radius: 20px; width: 500px;">'
 
 # 中央揃えのコンテナを作成
 st.markdown('<div class="header-container">', unsafe_allow_html=True)

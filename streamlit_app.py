@@ -7,6 +7,7 @@ import base64
 # ページ設定をスクリプトの最初に配置
 st.set_page_config(
     page_title="English Vocabulary Test",
+    layout="wide"  # 全幅レイアウトに設定
 )
 
 # カスタムCSSを適用
@@ -67,6 +68,13 @@ st.markdown(
         justify-content: center;
         margin-top: 20px;
     }
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh; /* ビューポートの高さに合わせる */
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -82,6 +90,7 @@ image_base64 = load_image(image_path)
 image_html = f'<img src="data:image/png;base64,{image_base64}" style="border-radius: 20px; width: 300px;">'
 
 # 中央揃えのコンテナを作成
+st.markdown('<div class="main-content">', unsafe_allow_html=True)
 st.markdown('<div class="header-container">', unsafe_allow_html=True)
 st.markdown(image_html, unsafe_allow_html=True)
 st.title('英単語テスト')
@@ -208,9 +217,8 @@ if 'test_started' in st.session_state and st.session_state.test_started:
         # 選択肢の表示
         st.markdown('<div class="button-container">', unsafe_allow_html=True)
         st.markdown('<div class="choices-container">', unsafe_allow_html=True)
-        for i, option in enumerate(st.session_state.options):
-            if st.button(option, key=f"choice_{i}", on_click=update_question, args=(option,)):
-                pass
+        for option in st.session_state.options:
+            st.button(option, key=option, on_click=update_question, args=(option,))
         st.markdown('</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
     else:

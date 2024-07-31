@@ -52,12 +52,6 @@ st.markdown(
     .choice-button:hover {
         background-color: #ffd17f;
     }
-    img {
-        border-radius: 20px; /* 画像の角を丸くする */
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
     .header-container {
         display: flex;
         flex-direction: column;
@@ -83,7 +77,7 @@ def load_image(image_path):
 
 image_path = 'img/English.png'
 image_base64 = load_image(image_path)
-image_html = f'<img src="data:image/png;base64,{image_base64}" style="border-radius: 20px;">'
+image_html = f'<img src="data:image/png;base64,{image_base64}" style="border-radius: 20px; width: 300px;">'
 
 # 中央揃えのコンテナを作成
 st.markdown('<div class="header-container">', unsafe_allow_html=True)

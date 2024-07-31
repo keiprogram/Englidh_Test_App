@@ -45,14 +45,23 @@ st.markdown(
         margin-right: auto;
     }
     .stButton > button {
-        display: inline-block;
-        margin: 0 10px;
+        background-color: #ffae4b;
+        color: #022033;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .stButton > button:hover {
+        background-color: #ffd17f;
     }
     .choices-container {
         display: flex;
         justify-content: center;
-        align-items: center;
         flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
     }
     .choice-button {
         background-color: #ffae4b;
@@ -204,7 +213,8 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
         else:
             st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
-        
+
+        # 選択肢の表示
         st.markdown('<div class="choices-container">', unsafe_allow_html=True)
         for i, option in enumerate(st.session_state.options):
             if st.button(option, key=f"choice_{i}", on_click=update_question, args=(option,)):

@@ -48,23 +48,23 @@ st.markdown(
         display: inline-block;
         margin: 0 10px;
     }
-    .stRadio > div {
-        display: flex;
-        justify-content: center;
-    }
-    .stRadio > div > div {
-        margin: 0 10px;
-    }
     .choices-container {
         display: flex;
         justify-content: center;
         align-items: center;
-        flex-direction: column;
+        flex-wrap: wrap;
     }
-    .center-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
+    .choice {
+        background-color: #ffae4b;
+        color: #022033;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .choice:hover {
+        background-color: #ffd17f;
     }
     h1, h2, h3, h4, h5, h6, .stMarkdown, .stText, .stSubheader {
         text-align: center;
@@ -113,7 +113,6 @@ range_start, range_end = map(int, selected_range.split('-'))
 filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')
 
 # テスト開始ボタン
-st.markdown('<div class="center-container">', unsafe_allow_html=True)
 if st.button('テストを開始する'):
     st.session_state.test_started = True
     st.session_state.correct_answers = 0
@@ -137,7 +136,6 @@ if st.button('テストを開始する'):
     np.random.shuffle(options)
     st.session_state.options = options
     st.session_state.answer = None
-st.markdown('</div>', unsafe_allow_html=True)
 
 # 問題更新用の関数
 def update_question():
@@ -208,8 +206,26 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
         
         st.markdown('<div class="choices-container">', unsafe_allow_html=True)
-        st.radio("選択してください", st.session_state.options, key='answer', on_change=update_question)
+        for option in st.session_state.options:
+            st.markdown(f'<div class="choice" onclick="window.updateAnswer(\'{option}\')">{option}</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
+
+        # JavaScriptを使って選択肢をクリックしたときの処理を追加
+        st.markdown(
+            """
+            <script>
+            function updateAnswer(answer) {
+                const input = document.querySelector('input[data-baseweb="radio"]');
+                if (input) {
+                    input.value = answer;
+                    const event = new Event('change', { bubbles: true });
+                    input.dispatchEvent(event);
+                }
+            }
+            </script>
+            """,
+            unsafe_allow_html=True
+        )
     else:
         display_results()
 else:

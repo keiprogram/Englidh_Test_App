@@ -212,15 +212,15 @@ def display_results():
 
     st.write(f"正答率: {accuracy:.0%}")
     st.progress(accuracy)
-
+    
+    # 間違えた問題の表示
+    st.markdown('<div class="results-container">', unsafe_allow_html=True)
     if wrong_answers:
-        st.markdown('<div class="results-container">', unsafe_allow_html=True)
-        st.write("間違えた単語とその語の意味 (番号の小さい順):")
-        # 番号の小さい順にソート
-        wrong_answers.sort(key=lambda x: x[0])
-        df_wrong_answers = pd.DataFrame(wrong_answers, columns=["番号", "単語", "語の意味"])
+        df_wrong_answers = pd.DataFrame(wrong_answers, columns=["問題番号", "単語", "語の意味"])
         st.write(df_wrong_answers.to_html(index=False, classes='results-table'), unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+    else:
+        st.write("すべて正解です！")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # テストが開始された場合の処理
 if 'test_started' in st.session_state and st.session_state.test_started:
@@ -231,7 +231,7 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
         st.markdown('<div class="choices-container">', unsafe_allow_html=True)
         for option in st.session_state.options:
-            st.button(option, key=f"button_{option}", on_click=update_question, args=(option,), use_container_width=True)
+            st.button(option, key=f"button_{st.session_state.current_question}_{option}", on_click=update_question, args=(option,))
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         display_results()

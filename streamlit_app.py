@@ -62,7 +62,14 @@ st.markdown(
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         margin-bottom: 20px;
+    }
+    .button-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
     }
     </style>
     """,
@@ -203,10 +210,12 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
 
         # 選択肢の表示
+        st.markdown('<div class="button-container">', unsafe_allow_html=True)
         st.markdown('<div class="choices-container">', unsafe_allow_html=True)
         for i, option in enumerate(st.session_state.options):
             if st.button(option, key=f"choice_{i}", on_click=update_question, args=(option,)):
                 pass
+        st.markdown('</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         display_results()

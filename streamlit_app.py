@@ -7,7 +7,6 @@ import base64
 # ページ設定をスクリプトの最初に配置
 st.set_page_config(
     page_title="English Vocabulary Test",
-    layout="wide"  # 全幅レイアウトに設定
 )
 
 # カスタムCSSを適用
@@ -68,12 +67,28 @@ st.markdown(
         justify-content: center;
         margin-top: 20px;
     }
-    .main-content {
+    .results-container {
+        margin-top: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vh; /* ビューポートの高さに合わせる */
+    }
+    .results-table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    .results-table th, .results-table td {
+        border: 1px solid #ffae4b;
+        padding: 8px;
+        text-align: center;
+    }
+    .results-table th {
+        background-color: #022033;
+        color: #ffae4b;
+    }
+    .results-table tr:nth-child(even) {
+        background-color: #e3e3e3;
     }
     </style>
     """,
@@ -90,7 +105,6 @@ image_base64 = load_image(image_path)
 image_html = f'<img src="data:image/png;base64,{image_base64}" style="border-radius: 20px; width: 300px;">'
 
 # 中央揃えのコンテナを作成
-st.markdown('<div class="main-content">', unsafe_allow_html=True)
 st.markdown('<div class="header-container">', unsafe_allow_html=True)
 st.markdown(image_html, unsafe_allow_html=True)
 st.title('英単語テスト')
@@ -200,11 +214,13 @@ def display_results():
     st.progress(accuracy)
 
     if wrong_answers:
+        st.markdown('<div class="results-container">', unsafe_allow_html=True)
         st.write("間違えた単語とその語の意味 (番号の小さい順):")
         # 番号の小さい順にソート
         wrong_answers.sort(key=lambda x: x[0])
-        wrong_answers_df = pd.DataFrame(wrong_answers, columns=["番号", "単語", "語の意味"])
-        st.dataframe(wrong_answers_df, use_container_width=True)
+        df_wrong_answers = pd.DataFrame(wrong_answers, columns=["番号", "単語", "語の意味"])
+        st.write(df_wrong_answers.to_html(index=False, classes='results-table'), unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # テストが開始された場合の処理
 if 'test_started' in st.session_state and st.session_state.test_started:
@@ -213,13 +229,9 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
         else:
             st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
-
-        # 選択肢の表示
-        st.markdown('<div class="button-container">', unsafe_allow_html=True)
         st.markdown('<div class="choices-container">', unsafe_allow_html=True)
         for option in st.session_state.options:
-            st.button(option, key=option, on_click=update_question, args=(option,), use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.button(option, key=f"button_{option}", on_click=update_question, args=(option,), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         display_results()

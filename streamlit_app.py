@@ -22,28 +22,6 @@ st.markdown(
         background-color: #022033;
         color: #ffae4b;
     }
-    .st-bd {
-        background-color: #022033;
-        color: #ffae4b;
-        text-align: center;
-    }
-    .st-cd {
-        background-color: #022033;
-        color: #ffae4b;
-        text-align: center;
-    }
-    .st-ec {
-        color: #ffae4b;
-    }
-    .st-cd {
-        background-color: #022033;
-    }
-    img {
-        border-radius: 20px; /* 画像の角を丸くする */
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
     .stButton > button {
         background-color: #ffae4b;
         color: #022033;
@@ -58,9 +36,8 @@ st.markdown(
     }
     .choices-container {
         display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 10px;
+        flex-direction: column;
+        align-items: center;
         margin-top: 20px;
     }
     .choice-button {
@@ -75,8 +52,17 @@ st.markdown(
     .choice-button:hover {
         background-color: #ffd17f;
     }
-    h1, h2, h3, h4, h5, h6, .stMarkdown, .stText, .stSubheader {
-        text-align: center;
+    img {
+        border-radius: 20px; /* 画像の角を丸くする */
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .header-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
     }
     </style>
     """,
@@ -91,11 +77,13 @@ def load_image(image_path):
 image_path = 'img/English.png'
 image_base64 = load_image(image_path)
 image_html = f'<img src="data:image/png;base64,{image_base64}" style="border-radius: 20px;">'
-st.markdown(image_html, unsafe_allow_html=True)
 
-# タイトルと説明
+# 中央揃えのコンテナを作成
+st.markdown('<div class="header-container">', unsafe_allow_html=True)
+st.markdown(image_html, unsafe_allow_html=True)
 st.title('英単語テスト')
 st.write('英単語を順に表示して、勉強をサポートします！')
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Load the data from multiple Excel files
 @st.cache_data

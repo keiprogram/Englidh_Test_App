@@ -55,6 +55,12 @@ st.markdown(
     .stRadio > div > div {
         margin: 0 10px;
     }
+    .choices-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
     h1, h2, h3, h4, h5, h6, .stMarkdown, .stText, .stSubheader {
         text-align: center;
     }
@@ -193,7 +199,10 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
         else:
             st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
+        
+        st.markdown('<div class="choices-container">', unsafe_allow_html=True)
         st.radio("選択してください", st.session_state.options, key='answer', on_change=update_question)
+        st.markdown('</div>', unsafe_allow_html=True)
     else:
         display_results()
 else:

@@ -225,12 +225,9 @@ def display_results():
 # テストが開始された場合の処理
 if 'test_started' in st.session_state and st.session_state.test_started:
     if st.session_state.current_question < st.session_state.total_questions:
-        if test_type == '英語→日本語':
-            st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
-        else:
-            st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
+        st.subheader(f"単語: {st.session_state.current_question_data['単語']}" if test_type == '英語→日本語' else f"語の意味: {st.session_state.current_question_data['語の意味']}")
         col1, col2, col3 = st.columns([1, 1, 1])
-        with col1:
+        with col2:
             for option in st.session_state.options:
                 if st.button(option, key=option, on_click=update_question, args=(option,)):
                     break

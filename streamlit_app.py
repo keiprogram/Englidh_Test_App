@@ -47,7 +47,6 @@ st.markdown(
     .stButton > button {
         display: inline-block;
         margin: 0 10px;
-        text-align:center;
     }
     .choices-container {
         display: flex;
@@ -69,12 +68,6 @@ st.markdown(
     }
     h1, h2, h3, h4, h5, h6, .stMarkdown, .stText, .stSubheader {
         text-align: center;
-    }
-    .center-content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
     }
     </style>
     """,
@@ -207,7 +200,6 @@ def display_results():
 # テストが開始された場合の処理
 if 'test_started' in st.session_state and st.session_state.test_started:
     if st.session_state.current_question < st.session_state.total_questions:
-        st.markdown('<div class="center-content">', unsafe_allow_html=True)
         if test_type == '英語→日本語':
             st.subheader(f"単語: {st.session_state.current_question_data['単語']}")
         else:
@@ -218,11 +210,8 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             if st.button(option, key=f"choice_{i}", on_click=update_question, args=(option,)):
                 pass
         st.markdown('</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
     else:
         display_results()
 else:
-    st.markdown('<div class="center-content">', unsafe_allow_html=True)
     if 'test_started' in st.session_state and st.session_state.finished:
         display_results()
-    st.markdown('</div>', unsafe_allow_html=True)

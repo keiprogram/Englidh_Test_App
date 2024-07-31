@@ -17,6 +17,7 @@ st.markdown(
         background-color: #022033;
         color: #ffae4b;
         text-align: center;
+        padding: 20px;
     }
     .sidebar .sidebar-content {
         background-color: #022033;
@@ -63,6 +64,7 @@ st.markdown(
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         margin-top: 20px;
     }
     </style>

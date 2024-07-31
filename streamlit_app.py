@@ -45,21 +45,15 @@ st.markdown(
         margin-right: auto;
     }
     .stButton > button {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .stRadio {
-        text-align: center;
-        margin: 0 auto;
+        display: inline-block;
+        margin: 0 10px;
     }
     .stRadio > div {
-        display: inline-block;
-        margin: 0 auto;
+        display: flex;
+        justify-content: center;
     }
-    .stRadio label {
-        display: block;
-        text-align: center;
+    .stRadio > div > div {
+        margin: 0 10px;
     }
     h1, h2, h3, h4, h5, h6, .stMarkdown, .stText, .stSubheader {
         text-align: center;

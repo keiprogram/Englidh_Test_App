@@ -61,6 +61,11 @@ st.markdown(
         align-items: center;
         flex-direction: column;
     }
+    .center-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
     h1, h2, h3, h4, h5, h6, .stMarkdown, .stText, .stSubheader {
         text-align: center;
     }
@@ -108,6 +113,7 @@ range_start, range_end = map(int, selected_range.split('-'))
 filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')
 
 # テスト開始ボタン
+st.markdown('<div class="center-container">', unsafe_allow_html=True)
 if st.button('テストを開始する'):
     st.session_state.test_started = True
     st.session_state.correct_answers = 0
@@ -131,6 +137,7 @@ if st.button('テストを開始する'):
     np.random.shuffle(options)
     st.session_state.options = options
     st.session_state.answer = None
+st.markdown('</div>', unsafe_allow_html=True)
 
 # 問題更新用の関数
 def update_question():

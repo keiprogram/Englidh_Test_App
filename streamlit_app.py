@@ -7,6 +7,7 @@ import base64
 # ページ設定をスクリプトの最初に配置
 st.set_page_config(
     page_title="English Vocabulary Test",
+    icon="book"
 )
 
 # カスタムCSSを適用

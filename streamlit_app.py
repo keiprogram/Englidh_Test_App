@@ -206,8 +206,8 @@ if 'test_started' in st.session_state and st.session_state.test_started:
             st.subheader(f"語の意味: {st.session_state.current_question_data['語の意味']}")
         
         st.markdown('<div class="choices-container">', unsafe_allow_html=True)
-        for option in st.session_state.options:
-            if st.button(option, key=option, on_click=update_question, args=(option,)):
+        for i, option in enumerate(st.session_state.options):
+            if st.button(option, key=f"choice_{i}", on_click=update_question, args=(option,)):
                 pass
         st.markdown('</div>', unsafe_allow_html=True)
     else:

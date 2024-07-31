@@ -217,8 +217,8 @@ def display_results():
     st.markdown('<div class="results-container">', unsafe_allow_html=True)
     if wrong_answers:
         df_wrong_answers = pd.DataFrame(wrong_answers, columns=["問題番号", "単語", "語の意味"])
-        df_wrong_answers = df_wrong_answers.sort_values(by="問題番号")  # 問題番号でソート
-        st.write(df_wrong_answers.to_html(index=False, classes='results-table'), unsafe_allow_html=True)
+        df_wrong_answers = df_wrong_answers.sort_values(by="問題番号")
+        st.markdown(df_wrong_answers.to_html(classes='results-table'), unsafe_allow_html=True)
     else:
         st.write("間違えた問題はありません。")
     st.markdown('</div>', unsafe_allow_html=True)
@@ -228,8 +228,8 @@ if 'test_started' in st.session_state and not st.session_state.finished:
     st.subheader(f"問題 {st.session_state.current_question + 1} / {st.session_state.total_questions}")
     st.subheader(f"{st.session_state.current_question_data['単語']}" if test_type == '英語→日本語' else f"{st.session_state.current_question_data['語の意味']}")
     st.markdown('<div class="choices-container">', unsafe_allow_html=True)
-    for option in st.session_state.options:
-        st.button(option, key=f"button_{st.session_state.current_question}_{option}", on_click=update_question, args=(option,))
+    for idx, option in enumerate(st.session_state.options):
+        st.button(option, key=f"button_{st.session_state.current_question}_{idx}", on_click=update_question, args=(option,))
     st.markdown('</div>', unsafe_allow_html=True)
 else:
     if 'test_started' in st.session_state and st.session_state.finished:

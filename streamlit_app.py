@@ -217,6 +217,7 @@ def display_results():
     st.markdown('<div class="results-container">', unsafe_allow_html=True)
     if wrong_answers:
         df_wrong_answers = pd.DataFrame(wrong_answers, columns=["問題番号", "単語", "語の意味"])
+        df_wrong_answers = df_wrong_answers.sort_values(by="問題番号")  # 問題番号でソート
         st.write(df_wrong_answers.to_html(index=False, classes='results-table'), unsafe_allow_html=True)
     else:
         st.write("すべて正解です！")

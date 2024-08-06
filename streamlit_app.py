@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 import base64
 
-st.set_page_config(page_title="English Vocabulary Test")
+st.set_page_config(page_title="English Vocabulary Test",  page_icon = 'img/English Logo.png')
 
 st.markdown(
     """

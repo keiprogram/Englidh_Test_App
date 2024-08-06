@@ -7,7 +7,6 @@ import base64
 # ページ設定をスクリプトの最初に配置
 st.set_page_config(
     page_title="English Vocabulary Test",
-    icon="book"
 )
 
 # カスタムCSSを適用
@@ -103,7 +102,7 @@ def load_image(image_path):
 
 image_path = 'img/English.png'
 image_base64 = load_image(image_path)
-image_html = f'<img src="data:image/png;base64,{image_base64}" style="border-radius: 20px; width: 450px;">'
+image_html = f'<img src="data:image/png;base64,{image_base64}" style="border-radius: 20px; width: 300px;">'
 
 # 中央揃えのコンテナを作成
 st.markdown('<div class="header-container">', unsafe_allow_html=True)

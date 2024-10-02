@@ -84,6 +84,10 @@ st.sidebar.title('出題範囲を選択してください')
 ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(14)]
 selected_range = st.sidebar.selectbox("出題範囲", ranges)
 
+# 出題数をスライダーで選択できる機能を追加
+st.sidebar.title('出題数を選択してください')
+num_questions = st.sidebar.slider('出題数', min_value=1, max_value=50, value=50)
+
 range_start, range_end = map(int, selected_range.split('-'))
 filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')
 
@@ -96,7 +100,8 @@ if st.button('テストを開始する'):
         'wrong_answers': [],
     })
 
-    selected_questions = filtered_words_df.sample(50).reset_index(drop=True)
+    # スライダーで選択された出題数に基づいて問題をランダムに選択
+    selected_questions = filtered_words_df.sample(num_questions).reset_index(drop=True)
     st.session_state.update({
         'selected_questions': selected_questions,
         'total_questions': len(selected_questions),

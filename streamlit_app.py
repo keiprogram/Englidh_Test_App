@@ -83,16 +83,16 @@ leap_words_df, system_words_df = load_data()
 st.sidebar.title("テスト形式を選択してください")
 test_type = st.sidebar.radio("", ('英語→日本語', '日本語→英語'), horizontal=True)
 
-st.sidebar.title('単語リストを選択してください')
-word_list = st.sidebar.radio("単語リスト", ("LEAP Basic", "システム英単語"))
+st.sidebar.title('単語帳を選択してください')
+word_list = st.sidebar.radio("単語帳", ("LEAP Basic英単語帳", "システム英単語"))
 
-# 単語リストに応じてデータを設定
-if word_list == "LEAP Basic":
+# 単語帳の選択に応じてデータと範囲を設定
+if word_list == "LEAP Basic英単語帳":
     words_df = leap_words_df
-    ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(14)]
+    ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(14)]  # LEAP Basicの範囲
 else:
     words_df = system_words_df
-    ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(len(words_df) // 100 + 1)]
+    ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(len(words_df) // 100 + 1)]  # システム英単語の範囲
 
 st.sidebar.title('出題範囲を選択してください')
 selected_range = st.sidebar.selectbox("出題範囲", ranges)
@@ -104,7 +104,5 @@ num_questions = st.sidebar.slider('出題数', min_value=1, max_value=50, value=
 range_start, range_end = map(int, selected_range.split('-'))
 filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')
 
-# 以下はテスト開始の処理と結果表示の処理など、元のコードの続き
-# (上記までの修正に合わせて、適宜データ読み込みやUIの設定部分を調整してください)
-
-# 以下省略
+# 以下、テスト開始の処理や結果表示の処理などのコードが続きます
+# (上記までの修正に合わせてデータロードやUIの設定を調整してください)

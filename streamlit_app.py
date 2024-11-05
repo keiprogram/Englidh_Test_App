@@ -7,7 +7,7 @@ import base64
 st.set_page_config(page_title="English Vocabulary Test", page_icon='img/English_fabikon.png')
 
 st.markdown(
-    """
+    """ 
     <style>
     .reportview-container, .sidebar .sidebar-content {
         background-color: #022033;
@@ -69,16 +69,12 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 @st.cache_data
 def load_data():
-    part1 = pd.read_excel("リープベーシック見出語・用例リスト(Part 1).xlsx")
-    part2 = pd.read_excel("リープベーシック見出語・用例リスト(Part 2).xlsx")
-    part3 = pd.read_excel("リープベーシック見出語・用例リスト(Part 3).xlsx")
-    part4 = pd.read_excel("リープベーシック見出語・用例リスト(Part 4).xlsx")
-    return pd.concat([part1, part2, part3, part4], ignore_index=True)
+    # シスタン.xlsxファイルからデータを読み込む
+    return pd.read_excel("シスタン.xlsx")
 
-words_df = load_data()
-
-st.sidebar.title("テスト形式を選択してください")
-test_type = st.sidebar.radio("", ('英語→日本語', '日本語→英語'), horizontal=True)
+# サイドバーでテスト形式を選択する
+st.sidebar.title('単語帳を選択してください')
+test_type = st.sidebar.radio("テスト形式", ('英語→日本語', '日本語→英語'), horizontal=True)
 
 st.sidebar.title('出題範囲を選択してください')
 ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(14)]
@@ -87,6 +83,9 @@ selected_range = st.sidebar.selectbox("出題範囲", ranges)
 # サイドバーで出題数を選択するスライダーを追加
 st.sidebar.title('出題数を選択してください')
 num_questions = st.sidebar.slider('出題数', min_value=1, max_value=50, value=10)
+
+# シスタン.xlsxから単語データを読み込む
+words_df = load_data()
 
 range_start, range_end = map(int, selected_range.split('-'))
 filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')

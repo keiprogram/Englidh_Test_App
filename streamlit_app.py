@@ -4,10 +4,10 @@ import numpy as np
 from PIL import Image
 import base64
 
-# Streamlitのページ設定
-st.set_page_config(page_title="English Vocabulary Test", page_icon='img/English_fabikon.png')
+# ページ設定
+st.set_page_config(page_title="English Vocabulary Test", page_icon="img/English_fabikon.png")
 
-# CSSスタイル
+# CSSスタイルの設定
 st.markdown(
     """
     <style>
@@ -55,7 +55,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 画像読み込み関数
+# 画像読み込み用関数
 def load_image(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode()
@@ -64,56 +64,46 @@ image_path = 'img/English.png'
 image_base64 = load_image(image_path)
 image_html = f'<img src="data:image/png;base64,{image_base64}" style="border-radius: 20px; width: 500px;">'
 
-# ヘッダー表示
 st.markdown('<div class="header-container">', unsafe_allow_html=True)
 st.markdown(image_html, unsafe_allow_html=True)
 st.title('英単語テスト')
 st.write('英単語を順に表示して、勉強をサポートします！')
 st.markdown('</div>', unsafe_allow_html=True)
 
-# データ読み込み関数
+# 単語リストを読み込む関数
 @st.cache_data
 def load_data():
-    leap_parts = [pd.read_excel(f"リープベーシック見出語・用例リスト(Part {i}).xlsx") for i in range(1, 5)]
-    leap_data = pd.concat(leap_parts, ignore_index=True)
-    system_data = pd.read_excel("/mnt/data/シスタン.xlsx")
-    return leap_data, system_data
+    part1 = pd.read_excel("リープベーシック見出語・用例リスト(Part 1).xlsx")
+    part2 = pd.read_excel("リープベーシック見出語・用例リスト(Part 2).xlsx")
+    part3 = pd.read_excel("リープベーシック見出語・用例リスト(Part 3).xlsx")
+    part4 = pd.read_excel("リープベーシック見出語・用例リスト(Part 4).xlsx")
+    leap_basic = pd.concat([part1, part2, part3, part4], ignore_index=True)
+    
+    system_vocab = pd.read_excel("シスタン.xlsx")
+    return leap_basic, system_vocab
 
-# データの読み込み
-leap_words_df, system_words_df = load_data()
+leap_basic_df, system_vocab_df = load_data()
 
-# サイドバーの設定
-st.sidebar.title("設定")
+# サイドバー設定
+st.sidebar.title("テスト設定")
+# 単語帳の選択
+word_list = st.sidebar.radio("単語帳を選択してください", ("LEAP Basic英単語帳", "システム英単語"))
 
-# テスト形式の選択
+# 出題形式の選択
 test_type = st.sidebar.radio("テスト形式を選択してください", ('英語→日本語', '日本語→英語'))
 
-# 単語帳の選択（セッション状態に保存）
-if "word_list" not in st.session_state:
-    st.session_state.word_list = "LEAP Basic英単語帳"
-
-word_list = st.sidebar.radio("単語帳を選択してください", ("LEAP Basic英単語帳", "システム英単語"), index=0)
-st.session_state.word_list = word_list
-
-# 単語帳の選択に応じたデータの設定
-if st.session_state.word_list == "LEAP Basic英単語帳":
-    words_df = leap_words_df
-    ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(14)]  # LEAP Basicの範囲
-else:
-    words_df = system_words_df
-    ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(len(words_df) // 100 + 1)]  # システム英単語の範囲
-
-# 選択された単語帳を確認（デバッグ表示）
-st.sidebar.write("選択中の単語帳:", st.session_state.word_list)
-
 # 出題範囲の選択
+st.sidebar.title('出題範囲を選択してください')
+ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(14)]
 selected_range = st.sidebar.selectbox("出題範囲", ranges)
 
-# 出題数を選択するスライダー
-num_questions = st.sidebar.slider('出題数を選択してください', min_value=1, max_value=50, value=10)
+# 出題数の選択
+st.sidebar.title('出題数を選択してください')
+num_questions = st.sidebar.slider('出題数', min_value=1, max_value=50, value=10)
 
-# 出題範囲の設定
+# 選択した単語帳と出題範囲に基づいてデータフレームを選択
 range_start, range_end = map(int, selected_range.split('-'))
+words_df = leap_basic_df if word_list == "LEAP Basic英単語帳" else system_vocab_df
 filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')
 
 # テスト開始ボタン
@@ -126,7 +116,7 @@ if st.button('テストを開始する'):
         'wrong_answers': [],
     })
 
-    # 選択した出題数に基づいてランダムに問題を選択
+    # ランダムな問題を選択
     selected_questions = filtered_words_df.sample(num_questions).reset_index(drop=True)
     st.session_state.update({
         'selected_questions': selected_questions,
@@ -134,7 +124,6 @@ if st.button('テストを開始する'):
         'current_question_data': selected_questions.iloc[0],
     })
 
-    # 問題の選択肢を設定
     if test_type == '英語→日本語':
         options = list(selected_questions['語の意味'].sample(3))
         options.append(st.session_state.current_question_data['語の意味'])
@@ -146,7 +135,7 @@ if st.button('テストを開始する'):
     st.session_state.options = options
     st.session_state.answer = None
 
-# 問題更新関数
+# 問題の更新
 def update_question(answer):
     if test_type == '英語→日本語':
         correct_answer = st.session_state.current_question_data['語の意味']
@@ -155,7 +144,6 @@ def update_question(answer):
         correct_answer = st.session_state.current_question_data['単語']
         question_word = st.session_state.current_question_data['語の意味']
 
-    # 答えの正誤判定
     if answer == correct_answer:
         st.session_state.correct_answers += 1
     else:
@@ -165,7 +153,6 @@ def update_question(answer):
             correct_answer
         ))
 
-    # 次の問題へ
     st.session_state.current_question += 1
     if st.session_state.current_question < st.session_state.total_questions:
         st.session_state.current_question_data = st.session_state.selected_questions.iloc[st.session_state.current_question]
@@ -181,7 +168,7 @@ def update_question(answer):
     else:
         st.session_state.finished = True
 
-# テスト結果表示関数
+# 結果表示
 def display_results():
     correct_answers = st.session_state.correct_answers
     total_questions = st.session_state.total_questions
@@ -206,31 +193,14 @@ def display_results():
         df_wrong_answers = pd.DataFrame(wrong_answers, columns=["問題番号", "単語", "語の意味"])
         df_wrong_answers = df_wrong_answers.sort_values(by="問題番号")
         st.markdown(df_wrong_answers.to_html(classes='results-table'), unsafe_allow_html=True)
+    else:
+        st.write("間違えた問題はありません。")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# テストが開始された場合、出題内容を表示
-if 'test_started' in st.session_state and st.session_state.test_started:
-    st.write(f"問題 {st.session_state.current_question + 1} / {st.session_state.total_questions}")
-    if test_type == '英語→日本語':
-        st.write(f"【単語】{st.session_state.current_question_data['単語']}")
-    else:
-        st.write(f"【意味】{st.session_state.current_question_data['語の意味']}")
-    
+# 問題と選択肢の表示
+if 'test_started' in st.session_state and not st.session_state.finished:
+    st.subheader(f"問題 {st.session_state.current_question + 1} / {st.session_state.total_questions}")
+    st.subheader(f"{st.session_state.current_question_data['単語']}" if test_type == '英語→日本語' else f"{st.session_state.current_question_data['語の意味']}")
     st.markdown('<div class="choices-container">', unsafe_allow_html=True)
-   # 各選択肢ボタンを表示
-for idx, option in enumerate(st.session_state.options):
-    if st.button(f"{option}", key=f"{st.session_state.current_question}_{idx}"):
-        update_question(option)
-
-# テスト終了後の結果表示
-if 'finished' in st.session_state and st.session_state.finished:
-    display_results()
-
-# スタート画面の表示
-else:
-    if 'test_started' not in st.session_state:
-        st.markdown('<div class="button-container">', unsafe_allow_html=True)
-        if st.button('テストを開始する'):
-            st.experimental_rerun()  # 再読み込みして開始
-        st.markdown('</div>', unsafe_allow_html=True)
-
+    for idx, option in enumerate(st.session_state.options):
+        st.button(option, key=f"button_{st.session_state.current_question}_{idx}", on_click=

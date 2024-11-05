@@ -4,10 +4,8 @@ import numpy as np
 from PIL import Image
 import base64
 
-# ページ設定
-st.set_page_config(page_title="English Vocabulary Test", page_icon="img/English_fabikon.png")
+st.set_page_config(page_title="English Vocabulary Test", page_icon='img/English_fabikon.png')
 
-# CSSスタイルの設定
 st.markdown(
     """
     <style>
@@ -55,7 +53,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 画像読み込み用関数
 def load_image(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode()
@@ -70,43 +67,30 @@ st.title('英単語テスト')
 st.write('英単語を順に表示して、勉強をサポートします！')
 st.markdown('</div>', unsafe_allow_html=True)
 
-# 単語リストを読み込む関数
 @st.cache_data
 def load_data():
     part1 = pd.read_excel("リープベーシック見出語・用例リスト(Part 1).xlsx")
     part2 = pd.read_excel("リープベーシック見出語・用例リスト(Part 2).xlsx")
     part3 = pd.read_excel("リープベーシック見出語・用例リスト(Part 3).xlsx")
     part4 = pd.read_excel("リープベーシック見出語・用例リスト(Part 4).xlsx")
-    leap_basic = pd.concat([part1, part2, part3, part4], ignore_index=True)
-    
-    system_vocab = pd.read_excel("シスタン.xlsx")
-    return leap_basic, system_vocab
+    return pd.concat([part1, part2, part3, part4], ignore_index=True)
 
-leap_basic_df, system_vocab_df = load_data()
+words_df = load_data()
 
-# サイドバー設定
-st.sidebar.title("テスト設定")
-# 単語帳の選択
-word_list = st.sidebar.radio("単語帳を選択してください", ("LEAP Basic英単語帳", "システム英単語"))
+st.sidebar.title("テスト形式を選択してください")
+test_type = st.sidebar.radio("", ('英語→日本語', '日本語→英語'), horizontal=True)
 
-# 出題形式の選択
-test_type = st.sidebar.radio("テスト形式を選択してください", ('英語→日本語', '日本語→英語'))
-
-# 出題範囲の選択
 st.sidebar.title('出題範囲を選択してください')
 ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(14)]
 selected_range = st.sidebar.selectbox("出題範囲", ranges)
 
-# 出題数の選択
+# サイドバーで出題数を選択するスライダーを追加
 st.sidebar.title('出題数を選択してください')
 num_questions = st.sidebar.slider('出題数', min_value=1, max_value=50, value=10)
 
-# 選択した単語帳と出題範囲に基づいてデータフレームを選択
 range_start, range_end = map(int, selected_range.split('-'))
-words_df = leap_basic_df if word_list == "LEAP Basic英単語帳" else system_vocab_df
 filtered_words_df = words_df[(words_df['No.'] >= range_start) & (words_df['No.'] <= range_end)].sort_values(by='No.')
 
-# テスト開始ボタン
 if st.button('テストを開始する'):
     st.session_state.update({
         'test_started': True,
@@ -116,7 +100,7 @@ if st.button('テストを開始する'):
         'wrong_answers': [],
     })
 
-    # ランダムな問題を選択
+    # 選択した出題数に基づいてランダムに問題を選択
     selected_questions = filtered_words_df.sample(num_questions).reset_index(drop=True)
     st.session_state.update({
         'selected_questions': selected_questions,
@@ -135,7 +119,6 @@ if st.button('テストを開始する'):
     st.session_state.options = options
     st.session_state.answer = None
 
-# 問題の更新
 def update_question(answer):
     if test_type == '英語→日本語':
         correct_answer = st.session_state.current_question_data['語の意味']
@@ -168,7 +151,6 @@ def update_question(answer):
     else:
         st.session_state.finished = True
 
-# 結果表示
 def display_results():
     correct_answers = st.session_state.correct_answers
     total_questions = st.session_state.total_questions
@@ -197,10 +179,13 @@ def display_results():
         st.write("間違えた問題はありません。")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# 問題と選択肢の表示
 if 'test_started' in st.session_state and not st.session_state.finished:
     st.subheader(f"問題 {st.session_state.current_question + 1} / {st.session_state.total_questions}")
     st.subheader(f"{st.session_state.current_question_data['単語']}" if test_type == '英語→日本語' else f"{st.session_state.current_question_data['語の意味']}")
     st.markdown('<div class="choices-container">', unsafe_allow_html=True)
     for idx, option in enumerate(st.session_state.options):
-        st.button(option, key=f"button_{st.session_state.current_question}_{idx}", on_click=
+        st.button(option, key=f"button_{st.session_state.current_question}_{idx}", on_click=update_question, args=(option,))
+    st.markdown('</div>', unsafe_allow_html=True)
+else:
+    if 'test_started' in st.session_state and st.session_state.finished:
+        display_results()

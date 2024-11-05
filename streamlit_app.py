@@ -88,16 +88,23 @@ st.sidebar.title("設定")
 # テスト形式の選択
 test_type = st.sidebar.radio("テスト形式を選択してください", ('英語→日本語', '日本語→英語'))
 
-# 単語帳の選択
-word_list = st.sidebar.radio("単語帳を選択してください", ("LEAP Basic英単語帳", "システム英単語"))
+# 単語帳の選択（セッション状態に保存）
+if "word_list" not in st.session_state:
+    st.session_state.word_list = "LEAP Basic英単語帳"
 
-# 単語帳に応じてデータを設定
-if word_list == "LEAP Basic英単語帳":
+word_list = st.sidebar.radio("単語帳を選択してください", ("LEAP Basic英単語帳", "システム英単語"), index=0)
+st.session_state.word_list = word_list
+
+# 単語帳の選択に応じたデータの設定
+if st.session_state.word_list == "LEAP Basic英単語帳":
     words_df = leap_words_df
     ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(14)]  # LEAP Basicの範囲
 else:
     words_df = system_words_df
     ranges = [f"{i*100+1}-{(i+1)*100}" for i in range(len(words_df) // 100 + 1)]  # システム英単語の範囲
+
+# 選択された単語帳を確認（デバッグ表示）
+st.sidebar.write("選択中の単語帳:", st.session_state.word_list)
 
 # 出題範囲の選択
 selected_range = st.sidebar.selectbox("出題範囲", ranges)
@@ -199,19 +206,31 @@ def display_results():
         df_wrong_answers = pd.DataFrame(wrong_answers, columns=["問題番号", "単語", "語の意味"])
         df_wrong_answers = df_wrong_answers.sort_values(by="問題番号")
         st.markdown(df_wrong_answers.to_html(classes='results-table'), unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# テストが開始された場合、出題内容を表示
+if 'test_started' in st.session_state and st.session_state.test_started:
+    st.write(f"問題 {st.session_state.current_question + 1} / {st.session_state.total_questions}")
+    if test_type == '英語→日本語':
+        st.write(f"【単語】{st.session_state.current_question_data['単語']}")
     else:
-        st.write("間違えた問題はありません。")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# テスト中の問題と選択肢の表示
-if 'test_started' in st.session_state and not st.session_state.finished:
-    st.subheader(f"問題 {st.session_state.current_question + 1} / {st.session_state.total_questions}")
-    st.subheader(f"{st.session_state.current_question_data['単語']}" if test_type == '英語→日本語' else f"{st.session_state.current_question_data['語の意味']}")
+        st.write(f"【意味】{st.session_state.current_question_data['語の意味']}")
+    
     st.markdown('<div class="choices-container">', unsafe_allow_html=True)
-    for idx, option in enumerate(st.session_state.options):
-        st.button(option, key=f"button_{st.session_state.current_question}_{idx}", on_click=update_question, args=(option,))
-    st.markdown('</div>', unsafe_allow_html=True)
+   # 各選択肢ボタンを表示
+for idx, option in enumerate(st.session_state.options):
+    if st.button(f"{option}", key=f"{st.session_state.current_question}_{idx}"):
+        update_question(option)
 
-# 結果表示
+# テスト終了後の結果表示
 if 'finished' in st.session_state and st.session_state.finished:
     display_results()
+
+# スタート画面の表示
+else:
+    if 'test_started' not in st.session_state:
+        st.markdown('<div class="button-container">', unsafe_allow_html=True)
+        if st.button('テストを開始する'):
+            st.experimental_rerun()  # 再読み込みして開始
+        st.markdown('</div>', unsafe_allow_html=True)
+
